@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0.0",
+  "slug": "printable-planners-canva-gemini",
+  "title": "Sell AI-designed printable planners on Etsy",
+  "summary": "Use Gemini and Canva to ship one niche planner, list it, and collect your first five dollars without holding inventory.",
+  "category": "commerce",
+  "difficulty": "easy",
+  "setupHoursBand": "2-8",
+  "capitalBand": "0",
+  "aiTools": ["gemini", "canva", "chatgpt"],
+  "tags": ["etsy", "printables", "zero-capital"],
+  "heroMetric": "First listing in one focused afternoon",
+  "overview": "You are not building a planner empire on day one. You pick a narrow buyer (exam season, Ramadan fasting log, freelance invoice week), generate a structured interior with Gemini, lay it out in Canva, export PDF, and list with honest photos. Income is not guaranteed; the loop is listing quality plus a handful of genuine reviews.",
+  "audience": {
+    "for": [
+      "People who can spend 3–6 hours at a laptop",
+      "Anyone comfortable with Canva Free",
+      "Sellers who will write a specific listing, not 'best planner ever'"
+    ],
+    "notFor": [
+      "Anyone expecting sales with zero marketing",
+      "People unwilling to check copyright on icons"
+    ]
+  },
+  "blueprint": [
+    {
+      "order": 1,
+      "title": "Pick a buyer who already searches",
+      "body": "Write one sentence: who, when, and what they need dated. Example: 'Final-year students who need a 8-week revision timetable they can print at home.' Reject generic 'productivity'.",
+      "effortMinutes": 25,
+      "isFreePreview": true
+    },
+    {
+      "order": 2,
+      "title": "Draft the interior structure",
+      "body": "List 8–12 page types (cover, how to use, weekly, habit, notes). Keep page count under 30 for v1 so you actually finish.",
+      "effortMinutes": 40,
+      "isFreePreview": true
+    },
+    {
+      "order": 3,
+      "title": "Generate copy and layout prompts",
+      "body": "Run the gated prompts. Paste Gemini output into Canva. Use free fonts only. Export print-ready PDF (A4 and US Letter).",
+      "effortMinutes": 90,
+      "isFreePreview": false
+    },
+    {
+      "order": 4,
+      "title": "List and ask for one proof",
+      "body": "Upload to Etsy or a Gumroad link. Price modestly. Share with three real people and save the listing URL as your EarnLoop proof.",
+      "effortMinutes": 50,
+      "isFreePreview": false
+    }
+  ],
+  "prompts": [
+    {
+      "title": "Niche validator",
+      "tool": "gemini",
+      "gated": false,
+      "prompt": "I want to sell a printable planner. Buyer: {{buyer}}. Season or constraint: {{constraint}}. List 10 specific Etsy-style titles that a real person might search. Flag any that sound like trademarked exam boards. Then pick the strongest 3 and explain why in one sentence each."
+    },
+    {
+      "title": "Interior page spec",
+      "tool": "gemini",
+      "gated": true,
+      "prompt": "Create a page-by-page spec for a {{pageCount}}-page printable for {{buyer}}. For each page: purpose, sections, empty fields the user fills, and a Canva layout hint (columns, checkboxes). No medical or financial advice. Tone: calm, practical."
+    }
+  ],
+  "monetization": {
+    "model": "Digital product, one SKU, then variations",
+    "steps": [
+      "Sell the PDF (Etsy or Gumroad)",
+      "Add a dated version each quarter",
+      "Bundle three related printables after 10 sales"
+    ],
+    "affiliateNotes": "If you recommend Canva Pro, disclose the affiliate link."
+  },
+  "metrics": {
+    "leading": ["Listing live", "10 product photos", "3 human shares"],
+    "lagging": ["First paid order", "5 reviews over 90 days"]
+  },
+  "xpCompletion": 80,
+  "seo": {
+    "title": "Sell printable planners with Gemini and Canva",
+    "description": "A realistic EarnLoop blueprint: niche, layout, list, and log proof of your first digital product."
+  }
+}

@@ -1,0 +1,17 @@
+---
+description: EarnLoop product constraints for all agents
+alwaysApply: true
+---
+
+# EarnLoop
+
+Brand: **EarnLoop** — “Learn it. Ship it. Loop the earnings.”
+
+Read `AGENTS.md` and `docs/00-PLAN.md` before implementing.
+
+- Stack: Next.js App Router, Tailwind, shadcn, TypeScript, Framer Motion, Supabase, Vercel Hobby.
+- AI: Gemini + OpenAI with login credits. Validate hustle JSON with `contracts/side-hustle.schema.json`.
+- Ads: AdSense in the web app. Store AdMob IDs only.
+- Gamification XP only for completed work (steps, proofs), not page views or ad clicks.
+- No `any`. No TODO placeholders. No Redis. No AdMob SDK in the browser.
+- Navbar: Learn, Earn, Tools, Services, News, Pricing, Loop, Admin.

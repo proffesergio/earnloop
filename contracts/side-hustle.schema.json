@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://earnloop.app/schemas/side-hustle/1.0.0",
+  "title": "EarnLoopSideHustle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "slug",
+    "title",
+    "summary",
+    "category",
+    "difficulty",
+    "setupHoursBand",
+    "capitalBand",
+    "aiTools",
+    "overview",
+    "audience",
+    "blueprint",
+    "prompts",
+    "monetization",
+    "metrics",
+    "xpCompletion"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "title": { "type": "string", "minLength": 8, "maxLength": 90 },
+    "summary": { "type": "string", "minLength": 40, "maxLength": 220 },
+    "category": {
+      "type": "string",
+      "enum": ["content", "commerce", "freelance", "local", "apps"]
+    },
+    "difficulty": { "type": "string", "enum": ["easy", "medium", "hard"] },
+    "setupHoursBand": { "type": "string", "enum": ["0-2", "2-8", "8-plus"] },
+    "capitalBand": { "type": "string", "enum": ["0", "1-50", "50-200", "200-plus"] },
+    "aiTools": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "chatgpt",
+          "gemini",
+          "claude",
+          "midjourney",
+          "canva",
+          "capcut",
+          "notion",
+          "other"
+        ]
+      }
+    },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "heroMetric": {
+      "type": "string",
+      "description": "Short honest outcome, e.g. First listing in one sitting"
+    },
+    "overview": { "type": "string", "minLength": 80 },
+    "audience": {
+      "type": "object",
+      "required": ["for", "notFor"],
+      "properties": {
+        "for": { "type": "array", "items": { "type": "string" } },
+        "notFor": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "blueprint": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["order", "title", "body", "effortMinutes", "isFreePreview"],
+        "properties": {
+          "order": { "type": "integer", "minimum": 1 },
+          "title": { "type": "string" },
+          "body": { "type": "string" },
+          "effortMinutes": { "type": "integer", "minimum": 5 },
+          "isFreePreview": { "type": "boolean" }
+        }
+      }
+    },
+    "prompts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "prompt", "gated"],
+        "properties": {
+          "title": { "type": "string" },
+          "prompt": { "type": "string" },
+          "tool": { "type": "string" },
+          "gated": { "type": "boolean" }
+        }
+      }
+    },
+    "monetization": {
+      "type": "object",
+      "required": ["model", "steps"],
+      "properties": {
+        "model": { "type": "string" },
+        "steps": { "type": "array", "items": { "type": "string" } },
+        "affiliateNotes": { "type": "string" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["leading", "lagging"],
+      "properties": {
+        "leading": { "type": "array", "items": { "type": "string" } },
+        "lagging": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "xpCompletion": { "type": "integer", "minimum": 10, "maximum": 200 },
+    "seo": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    }
+  }
+}
