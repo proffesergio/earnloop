@@ -37,6 +37,17 @@ npm run dev
 
 Do not invent a second stack. If a file in `docs/` and live code disagree, **update the docs in the same change**.
 
+## Admin magic-link sign in
+
+The `/admin` route is protected by Supabase Auth and the server-only `ADMIN_EMAILS` allowlist. Copy `.env.example` to `.env.local`, set the Supabase URL and anon key, and configure:
+
+```bash
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+ADMIN_EMAILS=owner@example.com,editor@example.com
+```
+
+In Supabase Auth URL configuration, add `http://localhost:3000/auth/callback` (and the equivalent production URL). Open `/admin`, enter an allowlisted email, and use the emailed magic link. The allowlist is checked server-side before a link is sent and again before the admin studio renders.
+
 ## Scholarship MVP
 
 The public `/scholarships` page is the first live product slice. It contains a curated, typed catalogue of government and programme sources, country study/visa portals, direct application guidance, and safety-focused social contact CTAs for a global audience.
