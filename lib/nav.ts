@@ -5,6 +5,7 @@ export const marketingNav = [
   { href: "/services", label: "Services" },
   { href: "/news", label: "News" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/scholarships", label: "Mobility" },
 ] as const;
 
 export const earnShortcuts = [
@@ -14,4 +15,10 @@ export const earnShortcuts = [
   { href: "/earn?category=commerce", label: "Commerce" },
   { href: "/earn?category=content", label: "Content" },
   { href: "/earn?category=freelance", label: "Freelance" },
+] as const;
+
+export const legacyNav = [
+  { href: "/prompts", label: "Prompt library" },
+  { href: "/scholarships", label: "Scholarships & work routes" },
+  { href: "/admin", label: "Admin studio" },
 ] as const;
