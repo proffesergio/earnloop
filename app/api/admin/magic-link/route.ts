@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAllowlistedAdminEmail } from "@/lib/admin-auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getPublicOrigin } from "@/lib/site-url";
 
 export async function POST(request: Request) {
   const body: unknown = await request.json().catch(() => null);
@@ -13,16 +14,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "That email is not configured for admin access." }, { status: 403 });
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!siteUrl) {
-    return NextResponse.json({ error: "NEXT_PUBLIC_SITE_URL is not configured." }, { status: 500 });
+  const supabase = await createSupabaseServerClient();
+  const origin = getPublicOrigin(request);
+  const wantsOtp = typeof body === "object" && body !== null && "mode" in body && body.mode === "otp";
+  const token = typeof body === "object" && body !== null && "token" in body && typeof body.token === "string"
+    ? body.token.replace(/\s/g, "")
+    : "";
+
+  if (wantsOtp) {
+    if (!/^\d{6}$/.test(token)) {
+      return NextResponse.json({ error: "Enter the six-digit code from your email." }, { status: 400 });
+    }
+
+    const { data, error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
+    if (error || !data.user || !isAllowlistedAdminEmail(data.user.email)) {
+      return NextResponse.json({ error: "That code is invalid or has expired." }, { status: 401 });
+    }
+
+    return NextResponse.json({ message: "Code verified.", redirectTo: "/admin" });
   }
 
-  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${siteUrl.replace(/\/$/, "")}/auth/callback?next=/admin`,
+      emailRedirectTo: `${origin}/auth/callback?next=/admin`,
       shouldCreateUser: true,
     },
   });
@@ -31,5 +46,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Supabase could not send the magic link." }, { status: 502 });
   }
 
-  return NextResponse.json({ message: "Check your inbox for the admin sign-in link." });
+  return NextResponse.json({ message: "Check your inbox for the sign-in link and six-digit code." });
 }

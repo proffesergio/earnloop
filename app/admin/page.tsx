@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminSession } from "@/lib/admin-auth";
+import ContentStudio from "./content-studio";
 
 const modules = ["Overview", "Hustles", "Guides & news", "Prompt library", "Ads", "Settings"] as const;
 
@@ -85,6 +86,8 @@ export default async function AdminPage() {
                 ))}
               </div>
             </div>
+
+            <ContentStudio />
 
             <div className="mt-6 rounded-2xl border border-amber-300/20 bg-amber-300/5 p-6">
               <h2 className="text-lg font-semibold text-amber-100">Allowlist access</h2>

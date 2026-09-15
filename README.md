@@ -46,7 +46,9 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ADMIN_EMAILS=owner@example.com,editor@example.com
 ```
 
-In Supabase Auth URL configuration, add `http://localhost:3000/auth/callback` (and the equivalent production URL). Open `/admin`, enter an allowlisted email, and use the emailed magic link. The allowlist is checked server-side before a link is sent and again before the admin studio renders.
+In Supabase Auth URL configuration, add `http://localhost:3000/auth/callback` and the equivalent production URL. Open `/admin`, enter an allowlisted email, then either click the emailed link or paste the six-digit code from the email into the login form. The callback uses the request host when a local `NEXT_PUBLIC_SITE_URL` is accidentally present in production. The allowlist is checked server-side before a code is sent and again before the admin studio renders.
+
+To show the code as well as the link, include `{{ .Token }}` in the Supabase Auth email template. Keep `{{ .ConfirmationURL }}` in the same template so either sign-in method remains available.
 
 ## Scholarship MVP
 

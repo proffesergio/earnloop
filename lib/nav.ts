@@ -20,5 +20,4 @@ export const earnShortcuts = [
 export const legacyNav = [
   { href: "/prompts", label: "Prompt library" },
   { href: "/scholarships", label: "Scholarships & work routes" },
-  { href: "/admin", label: "Admin studio" },
 ] as const;
