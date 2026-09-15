@@ -46,5 +46,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Supabase could not send the magic link." }, { status: 502 });
   }
 
-  return NextResponse.json({ message: "Check your inbox for the sign-in link and six-digit code." });
+  return NextResponse.json({
+    message: `Check your inbox for a sign-in link and six-digit code. The link points to ${origin}/auth/callback.`,
+  });
 }

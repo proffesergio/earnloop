@@ -42,13 +42,18 @@ Do not invent a second stack. If a file in `docs/` and live code disagree, **upd
 The `/admin` route is protected by Supabase Auth and the server-only `ADMIN_EMAILS` allowlist. Copy `.env.example` to `.env.local`, set the Supabase URL and anon key, and configure:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+# Optional locally, but set the live URL on Vercel:
+# NEXT_PUBLIC_SITE_URL=https://earnloop-kappa.vercel.app
 ADMIN_EMAILS=owner@example.com,editor@example.com
 ```
 
-In Supabase Auth URL configuration, add `http://localhost:3000/auth/callback` and the equivalent production URL. Open `/admin`, enter an allowlisted email, then either click the emailed link or paste the six-digit code from the email into the login form. The callback uses the request host when a local `NEXT_PUBLIC_SITE_URL` is accidentally present in production. The allowlist is checked server-side before a code is sent and again before the admin studio renders.
+In Supabase Auth → URL Configuration:
+- **Site URL** must be the live app, e.g. `https://earnloop-kappa.vercel.app`. If it stays `http://localhost:3000`, Supabase silently sends the fallback `http://localhost:3000/?code=...` link instead of your callback, even when the code asks for the production URL.
+- **Redirect URLs** must include both `http://localhost:3000/auth/callback` and `https://earnloop-kappa.vercel.app/auth/callback`.
 
-To show the code as well as the link, include `{{ .Token }}` in the Supabase Auth email template. Keep `{{ .ConfirmationURL }}` in the same template so either sign-in method remains available.
+Open `/admin`, enter an allowlisted email, then either click the emailed link or paste the six-digit code from the email into the login form. On Vercel the callback URL is resolved from `NEXT_PUBLIC_SITE_URL`, then `VERCEL_PROJECT_PRODUCTION_URL`/`VERCEL_URL`; request headers are only used when no configured URL exists, so a stray local `NEXT_PUBLIC_SITE_URL` can no longer leak into production emails. The allowlist is checked server-side before a code is sent and again before the admin studio renders.
+
+To show the six-digit code in the email as well as the link, open Supabase Auth → Email Templates → **Magic Link** and make sure the template includes `{{ .Token }}` alongside `{{ .ConfirmationURL }}`. The code verifies through `supabase.auth.verifyOtp`; without `{{ .Token }}` in the template the email contains only the link.
 
 The editorial CMS requires the server-only `SUPABASE_SERVICE_ROLE_KEY` for guarded admin mutations. Keep it out of all `NEXT_PUBLIC_*` variables and never import the admin client into a Client Component.
 

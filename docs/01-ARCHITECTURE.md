@@ -107,7 +107,7 @@ Hash IPs if you ever store them; prefer **not** storing raw IP on free tier. Cou
 
 ## Environment
 
-See `.env.example`. Vercel: set the same keys. Supabase redirect URLs: `http://localhost:3000/auth/callback` and production domain.
+See `.env.example`. Vercel: set the same keys (`NEXT_PUBLIC_SITE_URL` should be the live domain, not `localhost`). Supabase Auth → URL Configuration: Site URL must be the live app and Redirect URLs must include both `http://localhost:3000/auth/callback` and the production `https://<project>.vercel.app/auth/callback`. Magic-link redirects resolve via `lib/site-url.ts`: `NEXT_PUBLIC_SITE_URL`, then `VERCEL_PROJECT_PRODUCTION_URL`/`VERCEL_URL`, then request headers — localhost is never used for a non-local request. Admin OTP (`{{ .Token }}`) must be present in the Supabase **Magic Link** email template to appear alongside `{{ .ConfirmationURL }}`.
 
 ## Quality gates
 
