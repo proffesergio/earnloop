@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminSession } from "@/lib/admin-auth";
 import ContentStudio from "./content-studio";
+import HustleStudio from "./hustle-studio";
 
 const modules = ["Overview", "Hustles", "Guides & news", "Prompt library", "Ads", "Settings"] as const;
 
@@ -64,9 +65,9 @@ export default async function AdminPage() {
                   <h2 className="text-lg font-semibold">Editorial queue</h2>
                   <p className="mt-1 text-sm text-slate-500">Draft → review → publish</p>
                 </div>
-                <button className="rounded-xl border border-white/15 px-3 py-2 text-sm text-slate-300 hover:bg-white/5">
-                  New content
-                </button>
+                <Link href="/admin/content" className="rounded-xl border border-white/15 px-3 py-2 text-sm text-slate-300 hover:bg-white/5">
+                  Manage content
+                </Link>
               </div>
               <div className="mt-5 divide-y divide-white/10">
                 {[
@@ -86,6 +87,8 @@ export default async function AdminPage() {
                 ))}
               </div>
             </div>
+
+            <HustleStudio />
 
             <ContentStudio />
 

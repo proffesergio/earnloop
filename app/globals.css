@@ -131,8 +131,24 @@
 }
 
 @keyframes drift { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(2vw, -1.5vh, 0) scale(1.06); } }
+@keyframes drift-reverse { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(-2.5vw, 1.5vh, 0) scale(0.96); } }
+@keyframes pulse-soft { 0%, 100% { opacity: .45; } 50% { opacity: .9; } }
+@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
+@keyframes grid-pan { 0% { background-position: 0 0; } 100% { background-position: 44px 44px; } }
+
 .cosmic-bg { isolation: isolate; position: relative; overflow: hidden; }
-.cosmic-bg::before, .cosmic-bg::after { content: ""; position: absolute; z-index: -1; pointer-events: none; border-radius: 999px; filter: blur(10px); opacity: .55; animation: drift 16s ease-in-out infinite; }
+.cosmic-bg::before, .cosmic-bg::after, .cosmic-bg .cosmic-blob { content: ""; position: absolute; z-index: -1; pointer-events: none; border-radius: 999px; filter: blur(10px); opacity: .55; animation: drift 16s ease-in-out infinite; }
 .cosmic-bg::before { width: 34rem; height: 34rem; top: -15rem; right: -8rem; background: radial-gradient(circle, rgb(34 211 238 / .18), transparent 68%); }
 .cosmic-bg::after { width: 28rem; height: 28rem; bottom: -14rem; left: -8rem; background: radial-gradient(circle, rgb(163 230 53 / .12), transparent 68%); animation-delay: -7s; }
-@media (prefers-reduced-motion: reduce) { .cosmic-bg::before, .cosmic-bg::after { animation: none; } }
+.cosmic-bg .cosmic-blob { width: 24rem; height: 24rem; top: 30%; left: 45%; background: radial-gradient(circle, rgb(99 102 241 / .1), transparent 70%); animation: drift-reverse 22s ease-in-out infinite; animation-delay: -3s; }
+
+.cosmic-grid { position: relative; isolation: isolate; }
+.cosmic-grid::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background-image: linear-gradient(rgb(148 163 184 / 0.05) 1px, transparent 1px), linear-gradient(90deg, rgb(148 163 184 / 0.05) 1px, transparent 1px); background-size: 44px 44px; animation: grid-pan 9s linear infinite; mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 0%, transparent 70%); -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 0%, transparent 70%); }
+
+.pulse-blob { animation: pulse-soft 7s ease-in-out infinite; }
+.shimmer-line { position: relative; overflow: hidden; }
+.shimmer-line::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgb(34 211 238 / 0.12), transparent); animation: shimmer 3.5s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-bg::before, .cosmic-bg::after, .cosmic-bg .cosmic-blob, .cosmic-grid::before, .pulse-blob, .shimmer-line::after { animation: none; }
+}

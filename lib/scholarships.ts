@@ -15,6 +15,20 @@ export type Opportunity = {
   steps?: string[];
 };
 
+export type CountryGuide = {
+  country: string;
+  universities: string;
+  portal: string;
+  visa: string;
+  summary: string;
+  studySteps: string[];
+  documents: string[];
+};
+
+export function slugifyMobilityName(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
 export const opportunities: Opportunity[] = [
   { name: "Erasmus Mundus Joint Masters", country: "Europe", type: "Scholarship", level: "Master's", funding: "Full scholarship may cover tuition, travel and living", summary: "Competitive joint master's degrees delivered by a consortium of European universities.", eligibility: "Students worldwide; requirements vary by programme.", howToApply: "Choose a programme from the catalogue, read its consortium page and apply directly before that programme's deadline.", source: "https://www.eacea.ec.europa.eu/scholarships/emjm-catalogue_en", sourceLabel: "European Commission catalogue" },
   { name: "Chevening Scholarships", country: "United Kingdom", type: "Scholarship", level: "Master's", funding: "Fully funded UK one-year master's", summary: "The UK government's global scholarship for future leaders.", eligibility: "Work experience and leadership evidence are required; check the annual call for country details.", howToApply: "Create an account on the official Chevening application portal and submit the form and references during the open cycle.", source: "https://www.chevening.org/scholarships/", sourceLabel: "UK Foreign, Commonwealth & Development Office" },
@@ -32,11 +46,19 @@ export const opportunities: Opportunity[] = [
   { name: "Germany Opportunity Card", country: "Germany", type: "Work route", level: "Job search", funding: "Not funded; proof of funds required", summary: "A points-based route that can allow qualified applicants to seek work in Germany.", eligibility: "Recognised qualification or points route, language and financial requirements apply.", howToApply: "Check the official eligibility checker and apply through the responsible German mission or foreigners authority.", source: "https://www.make-it-in-germany.com/en/visa-residence/opportunity-card", sourceLabel: "Make it in Germany (Federal Government)", documents: ["Passport and proof of nationality", "Recognised qualification or evidence for the points route", "Language certificate", "Proof of funds", "Health insurance and accommodation evidence"], steps: ["Check recognition and points eligibility.", "Prepare language, qualification and financial proof.", "Book the responsible mission or authority appointment.", "Submit the visa or residence application.", "Search for eligible work while observing the route conditions."] },
 ];
 
-export const countryGuides = [
-  { country: "United Kingdom", universities: "Oxford, Cambridge, Imperial, UCL, Edinburgh", portal: "https://www.ucas.com/", visa: "https://www.gov.uk/student-visa" },
-  { country: "Australia", universities: "Melbourne, Sydney, UNSW, Monash, ANU", portal: "https://www.studyaustralia.gov.au/", visa: "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/student-500" },
-  { country: "Germany", universities: "TUM, LMU Munich, Heidelberg, RWTH Aachen, Humboldt", portal: "https://www.daad.de/en/studying-in-germany/", visa: "https://www.make-it-in-germany.com/en/visa-residence/types/studying" },
-  { country: "Japan", universities: "University of Tokyo, Kyoto, Osaka, Tohoku, Nagoya", portal: "https://www.studyinjapan.go.jp/en/", visa: "https://www.mofa.go.jp/j_info/visit/visa/long/visa6.html" },
-  { country: "Canada", universities: "Toronto, McGill, UBC, Alberta, Waterloo", portal: "https://www.educanada.ca/index.aspx?lang=eng", visa: "https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada.html" },
-  { country: "United States", universities: "MIT, Stanford, Harvard, Michigan, Cornell", portal: "https://educationusa.state.gov/", visa: "https://travel.state.gov/content/travel/en/us-visas/study/student-visa.html" },
+export const countryGuides: CountryGuide[] = [
+  { country: "United Kingdom", universities: "Oxford, Cambridge, Imperial, UCL, Edinburgh", portal: "https://www.ucas.com/", visa: "https://www.gov.uk/student-visa", summary: "A central application route for many undergraduate programmes, with postgraduate applications usually handled directly by universities.", studySteps: ["Shortlist courses and confirm subject, grade and English requirements.", "Apply through UCAS where required, or directly for postgraduate programmes.", "Compare the offer, deposit, funding and accommodation terms.", "Use the university CAS process before applying for the Student visa."], documents: ["Passport and academic transcripts", "English-language evidence where required", "Personal statement or study plan", "References and offer letter", "Proof of funds for visa purposes"] },
+  { country: "Australia", universities: "Melbourne, Sydney, UNSW, Monash, ANU", portal: "https://www.studyaustralia.gov.au/", visa: "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/student-500", summary: "Compare courses through the national study portal, then apply to the university and use its Confirmation of Enrolment process.", studySteps: ["Search courses and check international entry requirements.", "Apply directly or through an authorised education representative.", "Accept the offer and pay any required deposit.", "Receive the Confirmation of Enrolment and prepare the Student visa application."], documents: ["Passport", "Academic records and translated documents", "English test if required", "Offer and Confirmation of Enrolment", "Financial and health evidence"] },
+  { country: "Germany", universities: "TUM, LMU Munich, Heidelberg, RWTH Aachen, Humboldt", portal: "https://www.daad.de/en/studying-in-germany/", visa: "https://www.make-it-in-germany.com/en/visa-residence/types/studying", summary: "Use DAAD to compare programmes, language, tuition and application routes; some programmes use uni-assist.", studySteps: ["Confirm the qualification is recognised and check language requirements.", "Search DAAD and each university's official programme page.", "Apply through uni-assist or the university before the stated deadline.", "Arrange blocked-account or other financial proof before the visa appointment."], documents: ["Passport", "Recognised qualification and transcripts", "Language certificate", "Admission letter", "Proof of funds and health insurance"] },
+  { country: "Japan", universities: "University of Tokyo, Kyoto, Osaka, Tohoku, Nagoya", portal: "https://www.studyinjapan.go.jp/en/", visa: "https://www.mofa.go.jp/j_info/visit/visa/long/visa6.html", summary: "Explore degree and scholarship options through Study in Japan, then follow the university's direct admissions and certificate process.", studySteps: ["Choose English-taught or Japanese-taught programmes.", "Check entrance exams, intake dates and language requirements.", "Apply to the university or scholarship route named in the call.", "Use the Certificate of Eligibility process for the student visa."], documents: ["Passport", "Academic certificates and transcripts", "Language results", "Statement of purpose and references", "Admission letter and financial evidence"] },
+  { country: "Canada", universities: "Toronto, McGill, UBC, Alberta, Waterloo", portal: "https://www.educanada.ca/index.aspx?lang=eng", visa: "https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada.html", summary: "Use EduCanada for discovery, but verify admissions, deposits and study-permit rules on the institution and Government of Canada sites.", studySteps: ["Compare designated institutions and programme entry requirements.", "Apply to the university and wait for the letter of acceptance.", "Check whether a provincial attestation letter is required.", "Prepare the study-permit application and proof of funds."], documents: ["Passport", "Academic records", "Letter of acceptance", "Provincial attestation where required", "Proof of funds and medical or police documents if requested"] },
+  { country: "United States", universities: "MIT, Stanford, Harvard, Michigan, Cornell", portal: "https://educationusa.state.gov/", visa: "https://travel.state.gov/content/travel/en/us-visas/study/student-visa.html", summary: "EducationUSA helps compare institutions and funding; each university controls its own admissions, testing and financial-aid process.", studySteps: ["Build a balanced list of universities and verify deadlines.", "Prepare testing, essays, recommendations and financial-aid forms.", "Apply through the required university or shared application platform.", "After admission, receive the I-20 and apply for the F-1 visa."], documents: ["Passport", "Transcripts and translations", "Test scores if required", "Essays and recommendations", "I-20 and financial evidence"] },
 ];
+
+export function getOpportunity(slug: string): Opportunity | undefined {
+  return opportunities.find((item) => slugifyMobilityName(item.name) === slug);
+}
+
+export function getCountryGuide(slug: string): CountryGuide | undefined {
+  return countryGuides.find((item) => `study-${slugifyMobilityName(item.country)}` === slug);
+}

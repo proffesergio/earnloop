@@ -50,6 +50,8 @@ In Supabase Auth URL configuration, add `http://localhost:3000/auth/callback` an
 
 To show the code as well as the link, include `{{ .Token }}` in the Supabase Auth email template. Keep `{{ .ConfirmationURL }}` in the same template so either sign-in method remains available.
 
+The editorial CMS requires the server-only `SUPABASE_SERVICE_ROLE_KEY` for guarded admin mutations. Keep it out of all `NEXT_PUBLIC_*` variables and never import the admin client into a Client Component.
+
 ## Scholarship MVP
 
 The public `/scholarships` page is the first live product slice. It contains a curated, typed catalogue of government and programme sources, country study/visa portals, direct application guidance, and safety-focused social contact CTAs for a global audience.

@@ -73,3 +73,38 @@ export const editorialPosts: EditorialPost[] = [
 export function getEditorialPost(slug: string): EditorialPost | undefined {
   return editorialPosts.find((post) => post.slug === slug);
 }
+
+export async function getPublishedNews(): Promise<EditorialPost[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return editorialPosts;
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.from("hustles").select("payload, published_at").eq("content_type", "news").eq("status", "published").order("featured", { ascending: false }).order("published_at", { ascending: false });
+  const posts = (data ?? []).flatMap((row) => {
+    const parsed = editorialContentSchema.safeParse(row.payload);
+    return parsed.success ? [editorialPayloadToPost(parsed.data, row.published_at)] : [];
+  });
+  return posts.length > 0 ? posts : editorialPosts;
+}
+
+export async function getPublishedNewsPost(slug: string): Promise<EditorialPost | undefined> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return getEditorialPost(slug);
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.from("hustles").select("payload, published_at").eq("slug", slug).eq("content_type", "news").eq("status", "published").maybeSingle();
+  const parsed = data ? editorialContentSchema.safeParse(data.payload) : null;
+  return parsed?.success ? editorialPayloadToPost(parsed.data, data?.published_at) : getEditorialPost(slug);
+}
+
+function editorialPayloadToPost(content: EditorialContent, publishedAt?: string | null): EditorialPost {
+  return {
+    slug: content.slug,
+    title: content.title,
+    dek: content.dek,
+    category: content.category,
+    readTime: content.readTime,
+    publishedAt: publishedAt ? new Date(publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "Recently published",
+    author: content.author,
+    takeaways: content.takeaways,
+    sections: content.sections,
+  };
+}
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { editorialContentSchema, type EditorialContent } from "@/lib/content-contract";

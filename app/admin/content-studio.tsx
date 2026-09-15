@@ -11,7 +11,7 @@ type GeneratedContent = {
 
 export default function ContentStudio() {
   const [topic, setTopic] = useState("");
-  const [contentType, setContentType] = useState<"guide" | "opportunity" | "prompt">("guide");
+  const [contentType, setContentType] = useState<"guide" | "news">("guide");
   const [draft, setDraft] = useState<GeneratedContent | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -42,8 +42,7 @@ export default function ContentStudio() {
         <input required minLength={3} maxLength={240} value={topic} onChange={(event) => setTopic(event.target.value)} placeholder="e.g. selling a weekly content package to local cafes" className="h-11 rounded-xl border border-white/10 bg-[#07090c] px-3 text-sm text-white outline-none focus:border-cyan-300/50" />
         <select value={contentType} onChange={(event) => setContentType(event.target.value as typeof contentType)} className="h-11 rounded-xl border border-white/10 bg-[#07090c] px-3 text-sm text-slate-200 outline-none focus:border-cyan-300/50">
           <option value="guide">Guide</option>
-          <option value="opportunity">Opportunity</option>
-          <option value="prompt">Prompt pack</option>
+          <option value="news">News</option>
         </select>
         <button type="submit" disabled={isGenerating} className="h-11 rounded-xl bg-cyan-300 px-4 text-sm font-semibold text-slate-950 disabled:opacity-60">{isGenerating ? "Generating..." : "Generate draft"}</button>
       </form>
