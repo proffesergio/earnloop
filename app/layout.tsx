@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Script from "next/script";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { AdSenseLoader } from "@/components/ads/adsense-loader";
 import { cn } from "@/lib/utils";
 
 const spaceGrotesk = Space_Grotesk({
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="min-h-full flex flex-col bg-[#07090c]">
         {children}
+        <AdSenseLoader />
         {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ? (
           <Script
             defer

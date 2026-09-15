@@ -1,6 +1,7 @@
 export const marketingNav = [
   { href: "/learn", label: "Learn" },
   { href: "/earn", label: "Earn" },
+  { href: "/jobs", label: "Jobs" },
   { href: "/tools", label: "Tools" },
   { href: "/services", label: "Services" },
   { href: "/news", label: "News" },

@@ -8,6 +8,7 @@ export type EditorialPost = {
   author: string;
   takeaways: string[];
   sections: Array<{ heading: string; paragraphs: string[] }>;
+  seo: { title?: string; description?: string };
 };
 
 export const editorialPosts: EditorialPost[] = [
@@ -29,6 +30,7 @@ export const editorialPosts: EditorialPost[] = [
       { heading: "Make the first offer deliberately small", paragraphs: ["Offer five captions, two simple visuals, and one call-to-action rewrite delivered in seven days. State what the buyer provides, what you deliver, how many revisions are included, and what you do not promise.", "A small package gives you a useful constraint: you can finish it, learn what takes time, and collect a before-and-after example without pretending to be a full agency."] },
       { heading: "Build proof before chasing scale", paragraphs: ["Create one sample week for a real or clearly labelled fictional business. Show the reasoning behind each post and use original or permissioned assets.", "After delivery, ask which post created a reply, booking, or useful question. That evidence is more valuable than follower counts and tells you whether the offer should become a repeatable loop."] },
     ],
+    seo: {},
   },
   {
     slug: "newsletter-without-audience",
@@ -48,6 +50,7 @@ export const editorialPosts: EditorialPost[] = [
       { heading: "Ship a three-issue test", paragraphs: ["Write three issues with the same structure: one important change, two useful links, one action the reader can take this week. Keep the format plain and make every link earn its place.", "Send each issue to a small, permission-based list. Ask one question at the end: what did you use, what was missing, or what should be checked next?"] },
       { heading: "Turn replies into the next loop", paragraphs: ["Replies reveal whether the newsletter is becoming a habit. Track replies, forwards, and link clicks alongside unsubscribes; do not treat a large list with no response as traction.", "If readers repeatedly ask for a template, checklist, or research service, that request may become the paid offer. The newsletter is then evidence, not the entire business model."] },
     ],
+    seo: {},
   },
   {
     slug: "ai-assisted-market-research",
@@ -67,6 +70,7 @@ export const editorialPosts: EditorialPost[] = [
       { heading: "Label the leap", paragraphs: ["A recurring complaint is an observation. “People will pay for this solution” is a hypothesis. Ask AI to label each conclusion as observed, inferred, or unverified.", "This simple separation makes the output more useful: you can turn unverified claims into questions for a call, landing-page test, or small paid pilot."] },
       { heading: "Close with one human check", paragraphs: ["Choose the riskiest assumption and ask five people who fit the audience about their current workaround. Do not lead with your proposed product.", "A good research loop ends in a decision: continue, narrow the buyer, change the offer, or stop. The goal is not a polished report; it is a cheaper next step."] },
     ],
+    seo: {},
   },
 ];
 
@@ -82,7 +86,7 @@ export async function getPublishedNews(): Promise<EditorialPost[]> {
     const parsed = editorialContentSchema.safeParse(row.payload);
     return parsed.success ? [editorialPayloadToPost(parsed.data, row.published_at)] : [];
   });
-  return posts.length > 0 ? posts : editorialPosts;
+  return posts;
 }
 
 export async function getPublishedNewsPost(slug: string): Promise<EditorialPost | undefined> {
@@ -90,7 +94,7 @@ export async function getPublishedNewsPost(slug: string): Promise<EditorialPost 
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.from("hustles").select("payload, published_at").eq("slug", slug).eq("content_type", "news").eq("status", "published").maybeSingle();
   const parsed = data ? editorialContentSchema.safeParse(data.payload) : null;
-  return parsed?.success ? editorialPayloadToPost(parsed.data, data?.published_at) : getEditorialPost(slug);
+  return parsed?.success ? editorialPayloadToPost(parsed.data, data?.published_at) : undefined;
 }
 
 function editorialPayloadToPost(content: EditorialContent, publishedAt?: string | null): EditorialPost {
@@ -104,6 +108,7 @@ function editorialPayloadToPost(content: EditorialContent, publishedAt?: string 
     author: content.author,
     takeaways: content.takeaways,
     sections: content.sections,
+    seo: content.seo ?? {},
   };
 }
 import { createSupabaseServerClient } from "@/lib/supabase/server";

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Sparkles } from "lucide-react";
 
@@ -25,6 +26,7 @@ export default function HustleStudio() {
   const [category, setCategory] = useState<(typeof categories)[number]>("commerce");
   const [difficulty, setDifficulty] = useState<(typeof difficulties)[number]>("easy");
   const [draft, setDraft] = useState<GeneratedHustle | null>(null);
+  const [draftId, setDraftId] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -37,12 +39,14 @@ export default function HustleStudio() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ topic, category, difficulty, capitalBand: "0" }),
     });
-    const payload = (await response.json()) as { content?: GeneratedHustle; error?: string; message?: string };
-    if (payload.content) {
+    const payload = (await response.json()) as { id?: string; content?: GeneratedHustle; error?: string; message?: string };
+    if (payload.content && payload.id) {
       setDraft(payload.content);
-      setStatus(`Saved as draft right now. Open "Manage content" to review, require a category, or publish.`);
+      setDraftId(payload.id);
+      setStatus("Saved as draft. Review the payload and toggle Publish when ready.");
     } else {
       setDraft(null);
+      setDraftId(null);
       setStatus(payload.error ?? "Unable to generate a blueprint.");
     }
     setIsGenerating(false);
@@ -97,7 +101,17 @@ export default function HustleStudio() {
         </button>
       </form>
 
-      {status ? <p className="mt-4 text-sm text-slate-300">{status}</p> : null}
+      {status ? (
+        <p className="mt-4 text-sm text-slate-300">
+          {status}
+          {draftId ? (
+            <>
+              {" "}
+              <Link href={`/admin/hustles/${draftId}`} className="text-cyan-200 hover:text-white">Open in Hustle CMS →</Link>
+            </>
+          ) : null}
+        </p>
+      ) : null}
 
       {draft ? (
         <div className="mt-6 space-y-5 rounded-2xl border border-white/10 bg-[#07090c]/70 p-5">

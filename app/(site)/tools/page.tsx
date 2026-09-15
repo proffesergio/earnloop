@@ -1,5 +1,9 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Wand2 } from "lucide-react";
+import { AdSlot } from "@/components/ads/ad-slot";
+import { JsonLd } from "@/components/seo/json-ld";
+import { pageMetadata, itemListStructuredData } from "@/lib/seo";
 
 const tools = [
   {
@@ -21,6 +25,12 @@ const tools = [
     cta: "Generate pack"
   }
 ] as const;
+
+export const metadata: Metadata = pageMetadata({
+  title: "AI tools for side hustles · EarnLoop tool kit",
+  description: "Practical AI tools for positioning, generating copy, and turning a rough idea into a tiny proof loop — priced in credits, ready when you are.",
+  path: "/tools",
+});
 
 export default function ToolsPage() {
   return (
@@ -51,6 +61,31 @@ export default function ToolsPage() {
             </article>
           ))}
         </section>
+
+        <AdSlot variant="in-article" className="mt-10" />
+
+        <section className="mt-10 grid gap-5 rounded-3xl border border-white/10 bg-[#0e1318] p-7 sm:p-9 lg:grid-cols-2">
+          <div>
+            <p className="text-sm font-semibold text-lime-200">Start from a prompt</p>
+            <p className="mt-3 text-sm leading-7 text-slate-400">
+              Tools handle the wrapper; the prompt library gives you the raw inputs to practice the same skills free.
+            </p>
+            <Link href="/prompts" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white">
+              Open the prompt library <ArrowRight className="size-4" />
+            </Link>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-lime-200">Match a tool to a blueprint</p>
+            <p className="mt-3 text-sm leading-7 text-slate-400">
+              Every blueprint lists the AI tools it really uses and the hours it takes to set up.
+            </p>
+            <Link href="/earn?category=apps" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white">
+              Browse blueprints <ArrowRight className="size-4" />
+            </Link>
+          </div>
+        </section>
+
+        <JsonLd data={itemListStructuredData(tools.map((tool) => ({ name: tool.name })))} />
       </div>
     </div>
   );

@@ -1,90 +1,57 @@
-"use client";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight, BookOpenText } from "lucide-react";
+import { AdSlot } from "@/components/ads/ad-slot";
+import { JsonLd } from "@/components/seo/json-ld";
+import { pageMetadata, itemListStructuredData } from "@/lib/seo";
+import { getPromptLibrary } from "@/lib/prompt-content";
+import { PromptsExplorer } from "./explorer";
 
-import { useMemo, useState } from "react";
-import { Check, Copy, Search } from "lucide-react";
-import { prompts, type PromptCategory } from "@/lib/prompts";
+export const metadata: Metadata = pageMetadata({
+  title: "AI prompt library · Build something real",
+  description: "A free library of practical AI prompts for making real things: validating offers, pricing, outreach, SEO content, product visuals, and your first $1 proof. Copy, adapt, ship.",
+  path: "/prompts",
+});
+export const dynamic = "force-dynamic";
 
-const categories: Array<"All" | PromptCategory> = ["All", "Build", "Visuals", "Education", "Play"];
-
-export default function PromptsPage() {
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<(typeof categories)[number]>("All");
-  const [copied, setCopied] = useState<string | null>(null);
-
-  const filtered = useMemo(
-    () =>
-      prompts.filter(
-        (item) =>
-          (category === "All" || item.category === category) &&
-          `${item.title} ${item.summary} ${item.tool}`.toLowerCase().includes(query.toLowerCase())
-      ),
-    [query, category]
-  );
-
-  async function copyPrompt(prompt: string, title: string) {
-    await navigator.clipboard.writeText(prompt);
-    setCopied(title);
-    window.setTimeout(() => setCopied(null), 1600);
-  }
-
+export default async function PromptsPage() {
+  const library = await getPromptLibrary();
   return (
     <div className="cosmic-bg flex-1">
       <div className="mx-auto max-w-6xl px-6 py-12 sm:py-16">
         <div className="max-w-3xl">
-          <p className="text-sm font-medium text-cyan-300">Prompt library</p>
+          <p className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+            <BookOpenText className="size-4" /> Prompt library
+          </p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-6xl">Better inputs. More useful outputs.</h1>
           <p className="mt-5 text-lg leading-8 text-slate-400">
-            Reusable starting points for building, learning, visual storytelling and making fun things with AI.
+            Practical AI prompts to make real things: validate an offer, price a package, write copy, build a page, and land your first $1 proof.
           </p>
-        </div>
-
-        <div className="mt-10 flex flex-col gap-3 rounded-2xl border border-white/10 bg-[#0e1318] p-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-3.5 size-4 text-slate-500" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search prompts, tools or tasks"
-              className="h-11 w-full rounded-xl bg-white/5 pl-11 pr-4 text-sm outline-none focus:ring-1 focus:ring-cyan-300/50"
-            />
-          </div>
-          <div className="flex gap-2 overflow-x-auto">
-            {categories.map((item) => (
-              <button
-                key={item}
-                onClick={() => setCategory(item)}
-                className={`whitespace-nowrap rounded-xl px-3 py-2 text-sm ${category === item ? "bg-cyan-300 font-semibold text-slate-950" : "text-slate-400 hover:bg-white/5 hover:text-white"}`}
-              >
-                {item}
-              </button>
-            ))}
+          <div className="mt-6 flex flex-wrap gap-3 text-sm">
+            <Link href="/earn" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 font-medium text-slate-200 hover:border-cyan-300/40 hover:text-white">
+              Find a blueprint that uses this <ArrowRight className="size-4" />
+            </Link>
+            <Link href="/tools" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 font-medium text-slate-200 hover:border-cyan-300/40 hover:text-white">
+              Open the tool kit <ArrowRight className="size-4" />
+            </Link>
           </div>
         </div>
 
-        <p className="mt-5 text-xs text-slate-500">{filtered.length} prompts · copy, adapt, ship</p>
+        <AdSlot variant="leaderboard" className="mt-10" />
 
-        <section className="mt-6 grid gap-4 md:grid-cols-2">
-          {filtered.map((item) => (
-            <article key={item.title} className="flex flex-col rounded-2xl border border-white/10 bg-[#0e1318] p-6">
-              <div className="flex items-center justify-between gap-3">
-                <span className="rounded-full bg-cyan-300/10 px-2.5 py-1 text-xs text-cyan-200">{item.category}</span>
-                <span className="text-xs text-slate-500">{item.tool}</span>
-              </div>
-              <h2 className="mt-4 text-xl font-semibold">{item.title}</h2>
-              <p className="mt-2 text-sm text-slate-400">{item.summary}</p>
-              <pre className="mt-4 flex-1 whitespace-pre-wrap rounded-xl border border-white/10 bg-black/20 p-3 text-xs leading-5 text-slate-300">
-                {item.prompt}
-              </pre>
-              <button
-                onClick={() => copyPrompt(item.prompt, item.title)}
-                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white"
-              >
-                {copied === item.title ? <Check className="size-4 text-lime-300" /> : <Copy className="size-4" />}
-                {copied === item.title ? "Copied" : "Copy prompt"}
-              </button>
-            </article>
-          ))}
-        </section>
+        <PromptsExplorer prompts={library} />
+
+        <div className="mt-12 rounded-3xl border border-lime-300/20 bg-lime-300/5 p-7 sm:p-9">
+          <p className="text-sm font-semibold text-lime-200">Turn a prompt into a loop</p>
+          <p className="mt-3 max-w-2xl leading-7 text-slate-300">
+            A prompt is a starting point; the proof is the deliverable. Pick a blueprint, run the matching prompt, and ship the sample before you scale.
+          </p>
+          <Link href="/earn" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white">
+            Browse side-hustle blueprints <ArrowRight className="size-4" />
+          </Link>
+        </div>
+
+        <JsonLd data={itemListStructuredData(library.map((prompt) => ({ name: prompt.title })))} />
       </div>
     </div>
   );

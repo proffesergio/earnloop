@@ -8,7 +8,7 @@
 | UI | Tailwind + shadcn/ui + Radix + Lucide | Fast, accessible |
 | Motion | Framer Motion | Checklist / rank-up only |
 | Validation | Zod | JSON + forms + AI payloads |
-| Data | TanStack Query on client; Server Components + server actions for mutations | Cache tool runs, admin tables |
+| Data | Server Components for reads; client admin UI fetches `fetch()` in effects | No heavy client state lib in v1 |
 | Auth/DB | Supabase (Google social + Postgres) | Free tier, RLS, simple |
 | Host | Vercel Hobby | Requested |
 | AI | `@google/generative-ai` + `openai` | Free-credit tools |
@@ -54,6 +54,7 @@ content/seed/           # sample hustles
 ```
 AI provider → Zod parse → hustles (draft)
 Admin publish → RSC pages /earn/[slug]
+/earn board = DB published hustles + seed appended unless earn_include_seed=false (lib/hustle-content.ts, force-dynamic)
 Visitor → middleware increment page_views (sampled or batched)
 Member checklist → hustle_progress
 Member tool run → debit credits → generations cache
@@ -68,6 +69,18 @@ Member service brief → service_orders
 - `page_views`: insert via service role from a route handler (do not let anon write arbitrary rows).
 - `site_settings`: public read of non-secret keys; writes admin only. **Never** put OpenAI/Gemini keys in this table; env only.
 
+## Admin auth (magic link + permanent password)
+
+- First-time sign-in: `signInWithOtp` from `POST /api/admin/magic-link` sends a link (PKCE → `/auth/callback`) and a six-digit code (`verifyOtp`, `type: "email"`). Both are gated by the server-side `ADMIN_EMAILS` allowlist.
+- Permanent password: once signed in, set one via `POST /api/admin/set-password` (control room "Permanent password" card). Afterwards `POST /api/admin/password` uses `signInWithPassword` — no email needed. Password is stored in Supabase Auth, not in EarnLoop.
+- Session persistence: `proxy.ts` refreshes/rotates the Supabase cookies on **every** `/admin*` and `/api/admin*` request and guards those routes (redirect to `/admin/login` for pages, 401 JSON for APIs). Without it the access token (1h) would only refresh on page loads, which is why sessions felt short-lived.
+- Dashboard settings that make sessions comfortable: Supabase → Authentication → Session lifetime ≈ 30 days, Email OTP expiry ≈ 1 hour, and `{{ .Token }}` present in the Magic Link email template.
+- Scholarship and hustle data lives in `site_settings` / `hustles`, so admin edits are live without server restarts; only `ADMIN_EMAILS` and env changes need a redeploy.
+
+## Admin CMS coverage
+
+Guide/news (hustles table, `content_type` guide|news), hustles (AI generated + JSON editor), Mobility desk (scholarships + country guides in `site_settings` under `mobility_desk`, see `lib/scholarship-content.ts`), ads/AdMob settings, and the seed-curation toggle. Scholarships are rendered on `/scholarships` (force-dynamic) from the merged desk.
+
 ## Credits (simple)
 
 `profiles.credits` integer. Debit in a **single Postgres RPC** `spend_credits(amount, reason, meta)` so two tabs cannot double-spend. Welcome grant on `handle_new_user` trigger.
@@ -80,10 +93,11 @@ Member service brief → service_orders
 
 ## AdSense vs AdMob
 
-- Web: `next/script` loads `adsbygoogle.js` when `NEXT_PUBLIC_ADSENSE_CLIENT` or CMS `adsense_client` is set.  
-- Slot components read `ad_slots` from settings.  
-- `admob_android_app_id` / `admob_ios_app_id` exist for future apps; unused in Next.js.  
-- Loop+ members: `hide_ads_for_plus` flag.
+- Web: `components/ads/adsense-loader.tsx` (`next/script`, afterInteractive) loads `adsbygoogle.js` when `NEXT_PUBLIC_ADSENSE_CLIENT` is set. Never loaded otherwise.
+- Slots: `components/ads/ad-slot.tsx` reads `lib/ads.ts` `getAdsConfig()` and renders env-driven slots (`NEXT_PUBLIC_ADSENSE_CLIENT` + `NEXT_PUBLIC_ADSENSE_SLOT_LEADERBOARD` / `_IN_ARTICLE` / `_SIDEBAR`). Missing env = labeled placeholder, so the ad layout is always visible.
+- Admin: `/admin/ads` (Ads & networks) shows env status, a 4-step AdSense setup guide, and persists `admob_android_app_id` / `admob_ios_app_id` + `adsense_client` in `site_settings` (key `ads`) for future apps.
+- AdMob IDs exist for future native apps only; never used in Next.js. `hide_ads_for_plus` can be read from `site_settings` later.
+- Alternative networks (Ezoic, Adsterra, Media.net) can swap into `ad-slot.tsx` before AdSense approval.
 
 ## Social integration (CMS)
 

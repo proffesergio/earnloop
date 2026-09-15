@@ -1,14 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Clock3 } from "lucide-react";
+import { AdSlot } from "@/components/ads/ad-slot";
+import { JsonLd } from "@/components/seo/json-ld";
 import { getPublishedNewsPost } from "@/lib/content";
+import { pageMetadata, articleStructuredData, breadcrumbStructuredData } from "@/lib/seo";
 
 type NewsPostPageProps = { params: Promise<{ slug: string }> };
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: NewsPostPageProps): Promise<Metadata> {
   const post = await getPublishedNewsPost((await params).slug);
-  return post ? { title: post.title, description: post.dek } : { title: "Post not found" };
+  if (!post) return { title: "Post not found" };
+  return pageMetadata({
+    title: post.seo?.title || post.title,
+    description: post.seo?.description || post.dek,
+    path: `/news/${post.slug}`,
+  });
 }
 
 export default async function NewsPostPage({ params }: NewsPostPageProps) {
@@ -27,7 +35,7 @@ export default async function NewsPostPage({ params }: NewsPostPageProps) {
         <ArrowLeft className="size-4" /> Journal
       </Link>
       <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-cyan-300">
-        <span>{post.category}</span>
+        <Link href={`/news?category=${encodeURIComponent(post.category)}`} className="rounded-full bg-cyan-300/10 px-3 py-1 text-xs text-cyan-200 hover:bg-cyan-300/20">{post.category}</Link>
         <span className="inline-flex items-center gap-1 text-slate-500"><Clock3 className="size-4" />{post.readTime}</span>
         <span className="text-slate-500">{post.publishedAt}</span>
       </div>
@@ -50,11 +58,28 @@ export default async function NewsPostPage({ params }: NewsPostPageProps) {
           </section>
         ))}
       </div>
+      <AdSlot variant="in-article" className="my-12" />
       <div className="mt-14 border-t border-white/10 pt-8">
         <Link href="/earn" className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white">
           Turn this into a loop <ArrowLeft className="size-4 rotate-180" />
         </Link>
       </div>
+
+      <JsonLd
+        data={articleStructuredData({
+          headline: post.title,
+          description: post.dek,
+          path: `/news/${post.slug}`,
+          author: post.author,
+          datePublished: post.publishedAt,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbStructuredData([
+          { name: "News", path: "/news" },
+          { name: post.title, path: `/news/${post.slug}` },
+        ])}
+      />
     </article>
   );
 }

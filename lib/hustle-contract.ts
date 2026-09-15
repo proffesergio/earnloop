@@ -56,6 +56,7 @@ export const sideHustleSchema = z.object({
 
 export type SideHustle = z.infer<typeof sideHustleSchema>;
 export type SideHustleInput = Omit<SideHustle, "schemaVersion">;
+export const sideHustleInputSchema = sideHustleSchema.omit({ schemaVersion: true });
 
 export function sideHustleToPayload(input: SideHustleInput) {
   return sideHustleSchema.parse({ ...input, schemaVersion: "1.0.0" });

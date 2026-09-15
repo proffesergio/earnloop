@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminSession } from "@/lib/admin-auth";
 import ContentList from "./content-list";
+import NewsCategoriesManager from "./news-categories";
 
 export default async function AdminContentPage() {
   if (!(await getAdminSession())) redirect("/admin/login");
@@ -13,6 +14,7 @@ export default async function AdminContentPage() {
           <div><p className="text-sm text-cyan-300">Editorial CMS</p><h1 className="mt-2 text-4xl font-semibold">Guides & news</h1><p className="mt-3 text-slate-400">Draft, review, and publish practical content from one queue.</p></div>
           <Link href="/admin/content/new" className="rounded-xl bg-cyan-300 px-4 py-3 text-sm font-semibold text-slate-950">New post</Link>
         </div>
+        <NewsCategoriesManager />
         <ContentList />
       </div>
     </main>

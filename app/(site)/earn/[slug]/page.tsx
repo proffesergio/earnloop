@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Clock3, Sparkles } from "lucide-react";
-import { getHustleBySlug, hustleSeed } from "@/lib/hustles";
+import { AdSlot } from "@/components/ads/ad-slot";
+import { JsonLd } from "@/components/seo/json-ld";
+import { hustleSeed } from "@/lib/hustles";
+import { getPublishedHustle } from "@/lib/hustle-content";
+import { pageMetadata, articleStructuredData, breadcrumbStructuredData } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return hustleSeed.map((hustle) => ({ slug: hustle.slug }));
@@ -14,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const hustle = getHustleBySlug(slug);
+  const hustle = await getPublishedHustle(slug);
 
   if (!hustle) {
     return {
@@ -23,8 +27,11 @@ export async function generateMetadata({
   }
 
   return {
-    title: hustle.seo?.title ?? hustle.title,
-    description: hustle.seo?.description ?? hustle.summary
+    ...pageMetadata({
+      title: hustle.seo?.title ?? hustle.title,
+      description: hustle.seo?.description ?? hustle.summary,
+      path: `/earn/${hustle.slug}`,
+    }),
   };
 }
 
@@ -34,7 +41,7 @@ export default async function HustleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const hustle = getHustleBySlug(slug);
+  const hustle = await getPublishedHustle(slug);
 
   if (!hustle) {
     notFound();
@@ -65,9 +72,11 @@ export default async function HustleDetailPage({
             <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-400">{hustle.summary}</p>
 
             <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-300">
-              <div className="rounded-xl border border-white/10 bg-[#0e1318] px-3 py-2">
-                <span className="text-slate-500">Hero metric:</span> {hustle.heroMetric}
-              </div>
+              {hustle.heroMetric ? (
+                <div className="rounded-xl border border-white/10 bg-[#0e1318] px-3 py-2">
+                  <span className="text-slate-500">Hero metric:</span> {hustle.heroMetric}
+                </div>
+              ) : null}
               <div className="rounded-xl border border-white/10 bg-[#0e1318] px-3 py-2">
                 <span className="text-slate-500">XP reward:</span> {hustle.xpCompletion}
               </div>
@@ -179,6 +188,8 @@ export default async function HustleDetailPage({
             </div>
           </section>
 
+          <AdSlot variant="in-article" />
+
           <aside className="space-y-6">
             <div className="rounded-2xl border border-white/10 bg-[#0e1318] p-6">
               <h2 className="text-xl font-semibold">Monetization</h2>
@@ -221,6 +232,21 @@ export default async function HustleDetailPage({
             </div>
           </aside>
         </div>
+
+        <JsonLd
+          data={articleStructuredData({
+            headline: hustle.title,
+            description: hustle.summary,
+            path: `/earn/${hustle.slug}`,
+            author: "EarnLoop team",
+          })}
+        />
+        <JsonLd
+          data={breadcrumbStructuredData([
+            { name: "Earn", path: "/earn" },
+            { name: hustle.title, path: `/earn/${hustle.slug}` },
+          ])}
+        />
       </div>
     </div>
   );

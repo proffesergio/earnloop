@@ -3,8 +3,19 @@ import { redirect } from "next/navigation";
 import { getAdminSession } from "@/lib/admin-auth";
 import ContentStudio from "./content-studio";
 import HustleStudio from "./hustle-studio";
+import SetPasswordForm from "./set-password-form";
 
-const modules = ["Overview", "Hustles", "Guides & news", "Prompt library", "Ads", "Settings"] as const;
+const modules: Array<{ label: string; href: string | null }> = [
+  { label: "Overview", href: "/admin" },
+  { label: "Hustles", href: "/admin/hustles" },
+  { label: "Guides & news", href: "/admin/content" },
+  { label: "Prompts & library", href: "/admin/prompts" },
+  { label: "Import tools", href: "/admin/import" },
+  { label: "Mobility desk", href: "/admin/scholarships" },
+  { label: "Jobs & gigs", href: "/admin/jobs" },
+  { label: "Ads & networks", href: "/admin/ads" },
+  { label: "Settings", href: null },
+];
 
 export default async function AdminPage() {
   const session = await getAdminSession();
@@ -37,11 +48,21 @@ export default async function AdminPage() {
         <div className="mt-8 grid gap-6 lg:grid-cols-[220px_1fr]">
           <aside className="rounded-2xl border border-white/10 bg-[#0e1318] p-3">
             <nav className="space-y-1">
-              {modules.map((module, index) => (
-                <div key={module} className={`rounded-xl px-3 py-3 text-sm ${index === 0 ? "bg-cyan-300/10 text-cyan-200" : "text-slate-400"}`}>
-                  {module}
-                </div>
-              ))}
+              {modules.map((module, index) =>
+                module.href ? (
+                  <Link
+                    key={module.label}
+                    href={module.href}
+                    className={`block rounded-xl px-3 py-3 text-sm ${index === 0 ? "bg-cyan-300/10 text-cyan-200" : "text-slate-400 hover:bg-white/5 hover:text-white"}`}
+                  >
+                    {module.label}
+                  </Link>
+                ) : (
+                  <div key={module.label} className="rounded-xl px-3 py-3 text-sm text-slate-600">
+                    {module.label}
+                  </div>
+                )
+              )}
             </nav>
           </aside>
 
@@ -92,11 +113,15 @@ export default async function AdminPage() {
 
             <ContentStudio />
 
-            <div className="mt-6 rounded-2xl border border-amber-300/20 bg-amber-300/5 p-6">
-              <h2 className="text-lg font-semibold text-amber-100">Allowlist access</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-300">
-                This session passed the server-only ADMIN_EMAILS check. Change the allowlist in Vercel or .env.local, then restart the server to apply it.
-              </p>
+            <div className="mt-6 space-y-6">
+              <SetPasswordForm />
+
+              <div className="rounded-2xl border border-amber-300/20 bg-amber-300/5 p-6">
+                <h2 className="text-lg font-semibold text-amber-100">Allowlist access</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  This session passed the server-only ADMIN_EMAILS check. Change the allowlist in Vercel or .env.local, then restart the server to apply it.
+                </p>
+              </div>
             </div>
           </section>
         </div>

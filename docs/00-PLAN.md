@@ -158,7 +158,7 @@ Member home: streak, XP bar, credits, active hustle, next ship task, proofs, ser
 
 ## 5. Admin CMS (v1 — full control)
 
-See [`02-CMS-AND-ADMIN.md`](./02-CMS-AND-ADMIN.md). Admin can CRUD all content, toggle features, set AdSense/AdMob IDs, social share defaults, visitor stats, users, credits, orders, affiliates.
+See [`02-CMS-AND-ADMIN.md`](./02-CMS-AND-ADMIN.md). Admin can CRUD all content (guides, news, hustles, plus the Mobility desk scholarships/study plans stored in `site_settings`), toggle features, set AdSense/AdMob IDs, social share defaults, visitor stats, users, credits, orders, affiliates. Admin auth: magic link/OTP first, then a permanent password via `signInWithPassword` (see `docs/01-ARCHITECTURE.md`).
 
 ---
 

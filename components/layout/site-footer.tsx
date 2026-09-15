@@ -3,6 +3,7 @@ import { marketingNav } from "@/lib/nav";
 
 const resourceLinks = [
   { href: "/prompts", label: "Prompt library" },
+  { href: "/jobs", label: "Jobs & gigs" },
   { href: "/scholarships", label: "Scholarships & work routes" },
   { href: "/news", label: "Journal" },
   { href: "/pricing", label: "Pricing" },

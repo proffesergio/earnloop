@@ -27,9 +27,9 @@ export default async function AdminLoginPage() {
         </Link>
         <div className="mt-8 rounded-2xl border border-white/10 bg-[#0e1318] p-6">
           <p className="text-sm font-medium text-cyan-300">Admin studio</p>
-          <h1 className="mt-3 text-3xl font-semibold">Sign in with a magic link.</h1>
+          <h1 className="mt-3 text-3xl font-semibold">Sign in to the control room.</h1>
           <p className="mt-3 text-sm leading-6 text-slate-400">
-            Use an email configured in the server-only ADMIN_EMAILS allowlist. No password is stored by EarnLoop.
+            Use an email configured in the server-only ADMIN_EMAILS allowlist. Password sign-in works once you have set one; otherwise use the magic link.
           </p>
           <AdminLoginForm />
         </div>
