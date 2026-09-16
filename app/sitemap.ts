@@ -2,13 +2,22 @@ import type { MetadataRoute } from "next";
 import { hustleSeed } from "@/lib/hustles";
 import { getPublishedNews } from "@/lib/content";
 import { getPublishedHustles } from "@/lib/hustle-content";
-import { opportunities, countryGuides, slugifyMobilityName } from "@/lib/scholarships";
+import {
+  opportunities,
+  countryGuides,
+  slugifyMobilityName,
+} from "@/lib/scholarships";
 import { getMobilityDesk } from "@/lib/scholarship-content";
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://earnloop.app";
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://earnloop-kappa.vercel.app";
 
 function route(path: string, priority = 0.7) {
-  return { url: `${baseUrl}${path}`, changeFrequency: "weekly" as const, priority };
+  return {
+    url: `${baseUrl}${path}`,
+    changeFrequency: "weekly" as const,
+    priority,
+  };
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -26,14 +35,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const seedHustleSlugs = new Set(hustleSeed.map((item) => item.slug));
-  const hustleRoutes = hustleSeed.map((item) => route(`/earn/${item.slug}`, 0.9));
+  const hustleRoutes = hustleSeed.map((item) =>
+    route(`/earn/${item.slug}`, 0.9),
+  );
   const seedMobilitySlugs = new Set([
     ...opportunities.map((item) => slugifyMobilityName(item.name)),
-    ...countryGuides.map((item) => `study-${slugifyMobilityName(item.country)}`),
+    ...countryGuides.map(
+      (item) => `study-${slugifyMobilityName(item.country)}`,
+    ),
   ]);
   const mobilityRoutes = [
-    ...opportunities.map((item) => route(`/scholarships/${slugifyMobilityName(item.name)}`, 0.6)),
-    ...countryGuides.map((item) => route(`/scholarships/study-${slugifyMobilityName(item.country)}`, 0.6)),
+    ...opportunities.map((item) =>
+      route(`/scholarships/${slugifyMobilityName(item.name)}`, 0.6),
+    ),
+    ...countryGuides.map((item) =>
+      route(`/scholarships/study-${slugifyMobilityName(item.country)}`, 0.6),
+    ),
   ];
 
   let publishedHustleRoutes: MetadataRoute.Sitemap = [];
@@ -51,11 +68,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const desk = await getMobilityDesk();
     deskMobilityRoutes = [
       ...desk.opportunities
-        .filter((item) => !seedMobilitySlugs.has(slugifyMobilityName(item.name)))
-        .map((item) => route(`/scholarships/${slugifyMobilityName(item.name)}`, 0.6)),
+        .filter(
+          (item) => !seedMobilitySlugs.has(slugifyMobilityName(item.name)),
+        )
+        .map((item) =>
+          route(`/scholarships/${slugifyMobilityName(item.name)}`, 0.6),
+        ),
       ...desk.guides
-        .filter((item) => !seedMobilitySlugs.has(`study-${slugifyMobilityName(item.country)}`))
-        .map((item) => route(`/scholarships/study-${slugifyMobilityName(item.country)}`, 0.6)),
+        .filter(
+          (item) =>
+            !seedMobilitySlugs.has(
+              `study-${slugifyMobilityName(item.country)}`,
+            ),
+        )
+        .map((item) =>
+          route(
+            `/scholarships/study-${slugifyMobilityName(item.country)}`,
+            0.6,
+          ),
+        ),
     ];
   } catch {
     // Sitemap should still build if Supabase is unavailable.
@@ -69,5 +100,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Sitemap should still build if Supabase is unavailable.
   }
 
-  return [...staticRoutes, ...hustleRoutes, ...publishedHustleRoutes, ...mobilityRoutes, ...deskMobilityRoutes, ...newsRoutes];
+  return [
+    ...staticRoutes,
+    ...hustleRoutes,
+    ...publishedHustleRoutes,
+    ...mobilityRoutes,
+    ...deskMobilityRoutes,
+    ...newsRoutes,
+  ];
 }
