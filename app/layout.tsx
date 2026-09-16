@@ -23,9 +23,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://earnloop-kappa.vercel.app",
   ),
   verification: {
-    other: adsenseClient
-      ? { "google-adsense-account": adsenseClient }
-      : {},
+    other: adsenseClient ? { "google-adsense-account": adsenseClient } : {},
   },
   title: {
     default: "EarnLoop · AI side hustles, proven blueprints",

@@ -18,8 +18,13 @@ export async function POST(request: Request) {
 
   const { error } = await session.supabase.auth.updateUser({ password });
   if (error) {
-    return NextResponse.json({ error: "Could not update the password." }, { status: 502 });
+    return NextResponse.json(
+      { error: `Could not update the password: ${error.message}`, code: error.code ?? null },
+      { status: 502 },
+    );
   }
+
+  await session.supabase.auth.refreshSession();
 
   await createSupabaseAdminClient()
     .from("admin_audit")

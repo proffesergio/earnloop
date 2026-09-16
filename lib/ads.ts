@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export type AdSlotVariant = "leaderboard" | "in-article" | "sidebar";
+export type AdSlotVariant = "leaderboard" | "in-article" | "sidebar" | "multiplex";
 
 export type AdsConfig = {
   client: string | null;
@@ -20,6 +20,7 @@ export const adSettingsSchema = z.object({
     leaderboard: z.string().trim().max(60).default(""),
     "in-article": z.string().trim().max(60).default(""),
     sidebar: z.string().trim().max(60).default(""),
+    multiplex: z.string().trim().max(60).default(""),
   }),
   admobAndroid: z.string().trim().max(80).optional().default(""),
   admobIos: z.string().trim().max(80).optional().default(""),
@@ -39,6 +40,7 @@ export function getAdsConfig(): AdsConfig {
       leaderboard: envSlot(process.env.NEXT_PUBLIC_ADSENSE_SLOT_LEADERBOARD),
       "in-article": envSlot(process.env.NEXT_PUBLIC_ADSENSE_SLOT_IN_ARTICLE),
       sidebar: envSlot(process.env.NEXT_PUBLIC_ADSENSE_SLOT_SIDEBAR),
+      multiplex: envSlot(process.env.NEXT_PUBLIC_ADSENSE_SLOT_MULTI),
     },
   };
 }

@@ -5,6 +5,8 @@ import { getMobilityDesk } from "@/lib/scholarship-content";
 import { slugifyJobTitle } from "@/lib/jobs";
 import { slugifyMobilityName } from "@/lib/scholarships";
 import { sourceVerificationLabel } from "@/lib/source-verification";
+import { AdSlot } from "@/components/ads/ad-slot";
+
 
 export const dynamic = "force-dynamic";
 
@@ -98,6 +100,8 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      <AdSlot variant="multiplex" className="mx-auto max-w-6xl px-6 py-14" />
 
       <section id="method" className="mx-auto max-w-6xl px-6 py-20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
