@@ -1,0 +1,6 @@
+google.com, ca-pub-9495337371669420, DIRECT, f08c47fec0942fa0
+
+If you are a vendor supplying EarnLoop with ad inventory,
+your interest here is subject to EarnLoop's review.
+
+google.com, pub-9495337371669420, DIRECT, f08c47fec0942fa0

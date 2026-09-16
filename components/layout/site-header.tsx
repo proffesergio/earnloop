@@ -21,15 +21,24 @@ export function SiteHeader() {
         <Link href="/" className="text-xl font-semibold tracking-tight">
           Earn<span className="text-cyan-400">Loop</span>
         </Link>
-
-        <nav className="hidden items-center gap-1 text-sm text-slate-300 lg:flex" aria-label="Main navigation">
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9495337371669420"
+          crossOrigin="anonymous"
+        ></script>
+        <nav
+          className="hidden items-center gap-1 text-sm text-slate-300 lg:flex"
+          aria-label="Main navigation"
+        >
           {marketingNav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
                 "rounded-full px-3.5 py-2 transition-colors hover:text-white",
-                isActive(item.href) ? "bg-white/5 font-medium text-white" : "text-slate-300"
+                isActive(item.href)
+                  ? "bg-white/5 font-medium text-white"
+                  : "text-slate-300",
               )}
             >
               {item.label}
@@ -59,7 +68,10 @@ export function SiteHeader() {
 
       {open ? (
         <div className="border-t border-white/10 bg-[#07090c] px-6 py-5 lg:hidden">
-          <nav className="flex flex-col gap-1 text-sm" aria-label="Mobile navigation">
+          <nav
+            className="flex flex-col gap-1 text-sm"
+            aria-label="Mobile navigation"
+          >
             {marketingNav.map((item) => (
               <Link
                 key={item.href}
@@ -67,7 +79,9 @@ export function SiteHeader() {
                 onClick={() => setOpen(false)}
                 className={cn(
                   "rounded-xl px-3 py-3 text-slate-300 transition-colors hover:bg-white/5 hover:text-white",
-                  isActive(item.href) ? "bg-white/5 font-medium text-white" : ""
+                  isActive(item.href)
+                    ? "bg-white/5 font-medium text-white"
+                    : "",
                 )}
               >
                 {item.label}

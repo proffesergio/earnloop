@@ -16,10 +16,17 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT?.trim() || null;
+
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://earnloop-kappa.vercel.app",
   ),
+  verification: {
+    other: adsenseClient
+      ? { "google-adsense-account": adsenseClient }
+      : {},
+  },
   title: {
     default: "EarnLoop · AI side hustles, proven blueprints",
     template: "%s · EarnLoop",
