@@ -1,12 +1,10 @@
-import type { JobPosting } from "@/lib/job-contract";
-
 export function slugifyJobTitle(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
 const E = "https://earnloop.app/";
 
-export const seedJobPosts: JobPosting[] = [
+export const seedJobPosts = [
   // ── Remote jobs ────────────────────────────────────────────────────────
   {
     id: "remote-customer-support-part-time",
@@ -478,6 +476,6 @@ export const seedJobCategories: string[] = [
   "Online earning ideas",
 ];
 
-export function getSeedJobPosting(id: string): JobPosting | undefined {
+export function getSeedJobPosting(id: string): (typeof seedJobPosts)[number] | undefined {
   return seedJobPosts.find((job) => job.id === id);
 }

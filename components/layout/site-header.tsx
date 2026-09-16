@@ -39,10 +39,10 @@ export function SiteHeader() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <Link
-            href="/app"
+            href="/jobs"
             className="inline-flex items-center gap-2 rounded-full bg-cyan-300 px-4 py-2 text-sm font-semibold text-slate-950 transition-colors hover:bg-cyan-200"
           >
-            Loop dashboard <ArrowRight className="size-3.5" />
+            Browse openings <ArrowRight className="size-3.5" />
           </Link>
         </div>
 
@@ -74,11 +74,11 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link
-              href="/app"
+              href="/jobs"
               onClick={() => setOpen(false)}
               className="mt-3 inline-flex items-center justify-between rounded-xl bg-cyan-300 px-4 py-3 font-semibold text-slate-950"
             >
-              Loop dashboard <ArrowRight className="size-4" />
+              Browse openings <ArrowRight className="size-4" />
             </Link>
           </nav>
         </div>

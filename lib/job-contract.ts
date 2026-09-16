@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sourceVerificationSchema } from "@/lib/source-verification";
 
 export const jobSeoSchema = z.object({
   title: z.string().trim().max(180).optional(),
@@ -21,6 +22,7 @@ export const jobPostingSchema = z.object({
   howItWorks: z.array(z.string().trim().min(1).max(400)).max(24).default([]),
   tags: z.array(z.string().trim().min(1).max(40)).max(12).default([]),
   featured: z.boolean().default(false),
+  verification: sourceVerificationSchema.default(() => ({ verified: false, checkedOn: null, checks: [] })),
   seo: jobSeoSchema.default({}),
 });
 

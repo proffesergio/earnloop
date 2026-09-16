@@ -25,14 +25,14 @@ export default async function NewsPostPage({ params }: NewsPostPageProps) {
     return (
       <div className="px-6 py-24 text-center">
         <h1 className="text-3xl font-semibold">Post not found</h1>
-        <Link href="/news" className="mt-6 inline-block text-cyan-200">Back to the journal</Link>
+        <Link href="/news" className="mt-6 inline-block text-cyan-200">Back to Tips</Link>
       </div>
     );
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-14 sm:py-20">
       <Link href="/news" className="inline-flex items-center gap-2 text-sm text-cyan-200 hover:text-white">
-        <ArrowLeft className="size-4" /> Journal
+        <ArrowLeft className="size-4" /> Tips
       </Link>
       <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-cyan-300">
         <Link href={`/news?category=${encodeURIComponent(post.category)}`} className="rounded-full bg-cyan-300/10 px-3 py-1 text-xs text-cyan-200 hover:bg-cyan-300/20">{post.category}</Link>
@@ -60,8 +60,8 @@ export default async function NewsPostPage({ params }: NewsPostPageProps) {
       </div>
       <AdSlot variant="in-article" className="my-12" />
       <div className="mt-14 border-t border-white/10 pt-8">
-        <Link href="/earn" className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white">
-          Turn this into a loop <ArrowLeft className="size-4 rotate-180" />
+        <Link href="/tools" className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white">
+          Run this as a loop <ArrowLeft className="size-4 rotate-180" />
         </Link>
       </div>
 

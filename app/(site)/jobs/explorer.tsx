@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight, ExternalLink, ShieldCheck } from "lucide-react";
 import { AdSlot } from "@/components/ads/ad-slot";
 import type { JobPosting } from "@/lib/job-contract";
+import { sourceVerificationLabel } from "@/lib/source-verification";
 
 function slugify(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -82,6 +83,11 @@ export default function JobsExplorer({ categories, jobs }: { categories: string[
                 <div className="flex flex-wrap items-center gap-2 text-xs">
                   <span className="rounded-full bg-cyan-300/10 px-2.5 py-1 text-cyan-200">{job.category}</span>
                   {job.featured ? <span className="rounded-full bg-amber-300/10 px-2.5 py-1 text-amber-200">Featured</span> : null}
+                  {job.verification?.verified ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-lime-300/10 px-2.5 py-1 text-lime-200" title="Checked against the official source">
+                      <ShieldCheck className="size-3" /> {sourceVerificationLabel(job.verification)}
+                    </span>
+                  ) : null}
                   <span className="ml-auto text-slate-500">{job.postedAt}</span>
                 </div>
 

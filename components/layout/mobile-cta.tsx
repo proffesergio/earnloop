@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function MobileCta({ href = "/earn" }: { href?: string }) {
+export function MobileCta({ href = "/jobs" }: { href?: string }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export function MobileCta({ href = "/earn" }: { href?: string }) {
         href={href}
         className="flex w-full items-center justify-center gap-2 rounded-full bg-cyan-300 py-3 text-sm font-semibold text-slate-950"
       >
-        Start a loop <ArrowRight className="size-4" />
+        Browse openings <ArrowRight className="size-4" />
       </Link>
     </div>
   );

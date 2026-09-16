@@ -1,91 +1,73 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Wand2 } from "lucide-react";
+import { ArrowRight, BookOpenCheck, ShieldCheck, Sparkles, Wand2 } from "lucide-react";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { JsonLd } from "@/components/seo/json-ld";
+import { LoopBuilder } from "@/components/loop/loop-builder";
+import { getJobBoard } from "@/lib/job-content";
+import { getMobilityDesk } from "@/lib/scholarship-content";
 import { pageMetadata, itemListStructuredData } from "@/lib/seo";
 
-const tools = [
-  {
-    name: "Hustle idea expander",
-    summary: "Turn a vague niche into a shortlist of demand-driven side hustles with pricing and proof steps.",
-    price: "Free demo",
-    cta: "Open prompt"
-  },
-  {
-    name: "Offer headline + landing section writer",
-    summary: "Generate a simple offer, CTA, and landing section for your next service package.",
-    price: "3 credits",
-    cta: "Run tool"
-  },
-  {
-    name: "Prompt pack generator",
-    summary: "Create copy and workflow prompts tailored to a hustle, audience, and skill level.",
-    price: "5 credits",
-    cta: "Generate pack"
-  }
-] as const;
-
 export const metadata: Metadata = pageMetadata({
-  title: "AI tools for side hustles · EarnLoop tool kit",
-  description: "Practical AI tools for positioning, generating copy, and turning a rough idea into a tiny proof loop — priced in credits, ready when you are.",
+  title: "The Loop Builder · one proven tool",
+  description: "Turn a real opening from the Jobs board or Mobility desk into an honest 7-day action plan with a first-proof goal — no income promises.",
   path: "/tools",
 });
+export const dynamic = "force-dynamic";
 
-export default function ToolsPage() {
+export default async function ToolsPage() {
+  const [{ jobs }, mobility] = await Promise.all([getJobBoard(), getMobilityDesk()]);
+
+  const suggestions = [
+    ...jobs.slice(0, 5).map((job) => ({ label: job.title, href: `/jobs` })),
+    ...mobility.opportunities.slice(0, 5).map((item) => ({ label: item.name, href: `/scholarships` })),
+  ];
+
   return (
     <div className="cosmic-bg flex-1">
       <div className="mx-auto max-w-6xl px-6 py-12 sm:py-16">
         <div className="max-w-3xl">
           <p className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
-            <Wand2 className="size-4" /> Tool kit
+            <Wand2 className="size-4" /> One tool · no fake promises
           </p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-6xl">Use AI where it saves real work.</h1>
+          <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-6xl">Build a loop that produces proof, not promises.</h1>
           <p className="mt-5 text-lg leading-8 text-slate-400">
-            These are practical tools for positioning, generating copy, and turning a rough idea into a tiny proof loop.
+            Pick a real opening from the Jobs board or the Mobility desk, set the hours you can truly give, and get a 7-day action plan with a first-proof goal. The work is real; the result is verifiable.
           </p>
         </div>
 
-        <section className="mt-10 grid gap-5 lg:grid-cols-3">
-          {tools.map((tool) => (
-            <article key={tool.name} className="rounded-2xl border border-white/10 bg-[#0e1318] p-6">
-              <div className="flex items-center justify-between gap-3">
-                <span className="rounded-full bg-cyan-300/10 px-2.5 py-1 text-xs text-cyan-200">{tool.price}</span>
-                <Sparkles className="size-5 text-cyan-300" />
-              </div>
-              <h2 className="mt-5 text-2xl font-semibold">{tool.name}</h2>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{tool.summary}</p>
-              <Link href="/earn" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white">
-                {tool.cta} <ArrowRight className="size-4" />
+        <div className="mt-10">
+          <LoopBuilder suggestions={suggestions} />
+        </div>
+
+        <AdSlot variant="in-article" className="mt-12" />
+
+        <section className="mt-12 grid gap-5 rounded-3xl border border-white/10 bg-[#0e1318] p-7 sm:p-9 lg:grid-cols-3">
+          {([
+            { icon: ShieldCheck, title: "Verified sources", description: "Every external opening carries a source check you can inspect — what we confirmed, and when. No lookalike links.", href: "/jobs", cta: "Open the Jobs board" },
+            { icon: BookOpenCheck, title: "Step-by-step routes", description: "Interactive checklists follow each listing from application to proof — so anyone can run a route without a mentor.", href: "/scholarships", cta: "Open the Mobility desk" },
+            { icon: Sparkles, title: "Blueprints and prompts", description: "The proven blueprint library and prompt pack remain here for the people who finish a loop and want to sell the outcome.", href: "/earn", cta: "Browse blueprints" },
+          ] as const).map(({ icon: Icon, title, description, href, cta }) => (
+            <article key={title} className="rounded-2xl border border-white/10 bg-[#07090c] p-6">
+              <Icon className="size-6 text-cyan-300" />
+              <h2 className="mt-5 text-xl font-semibold">{title}</h2>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{description}</p>
+              <Link href={href} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white">
+                {cta} <ArrowRight className="size-4" />
               </Link>
             </article>
           ))}
         </section>
 
-        <AdSlot variant="in-article" className="mt-10" />
+        <p className="mt-8 text-xs leading-5 text-slate-500">
+          Honest notice: no tool on EarnLoop guarantees income. The Loop Builder turns hours of effort into verifiable proof — an application, a delivered sample, or a first $1. That proof is what the next step is built on.
+        </p>
 
-        <section className="mt-10 grid gap-5 rounded-3xl border border-white/10 bg-[#0e1318] p-7 sm:p-9 lg:grid-cols-2">
-          <div>
-            <p className="text-sm font-semibold text-lime-200">Start from a prompt</p>
-            <p className="mt-3 text-sm leading-7 text-slate-400">
-              Tools handle the wrapper; the prompt library gives you the raw inputs to practice the same skills free.
-            </p>
-            <Link href="/prompts" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white">
-              Open the prompt library <ArrowRight className="size-4" />
-            </Link>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-lime-200">Match a tool to a blueprint</p>
-            <p className="mt-3 text-sm leading-7 text-slate-400">
-              Every blueprint lists the AI tools it really uses and the hours it takes to set up.
-            </p>
-            <Link href="/earn?category=apps" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 hover:text-white">
-              Browse blueprints <ArrowRight className="size-4" />
-            </Link>
-          </div>
-        </section>
-
-        <JsonLd data={itemListStructuredData(tools.map((tool) => ({ name: tool.name })))} />
+        <JsonLd
+          data={itemListStructuredData(
+            suggestions.map((suggestion) => ({ name: suggestion.label }))
+          )}
+        />
       </div>
     </div>
   );

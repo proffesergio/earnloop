@@ -4,8 +4,10 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, BookOpenCheck, CheckCircle2, ClipboardCheck, Clock3, FileText, Globe2, Landmark, SearchCheck, ShieldCheck, UserRoundCheck, Wallet } from "lucide-react";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { JsonLd } from "@/components/seo/json-ld";
+import { RouteChecklist } from "@/components/loop/route-checklist";
 import { slugifyMobilityName, type Opportunity } from "@/lib/scholarships";
 import { getMobilityBySlug } from "@/lib/scholarship-content";
+import { sourceVerificationLabel } from "@/lib/source-verification";
 import { pageMetadata, articleStructuredData, breadcrumbStructuredData } from "@/lib/seo";
 
 type MobilityDetailProps = { params: Promise<{ slug: string }> };
@@ -71,20 +73,7 @@ export default async function MobilityDetailPage({ params }: MobilityDetailProps
 
           <div className="mt-10 grid gap-5 lg:grid-cols-[1fr_300px]">
             <div className="space-y-5">
-              <section className="rounded-2xl border border-white/10 bg-[#0e1318] p-6">
-                <div className="flex items-center gap-3">
-                  <SearchCheck className="size-5 text-cyan-300" />
-                  <h2 className="text-2xl font-semibold">Study-plan checklist</h2>
-                </div>
-                <ol className="mt-6 space-y-5">
-                  {guide.studySteps.map((step, index) => (
-                    <li key={step} className="flex gap-4 text-slate-300">
-                      <span className="text-cyan-300">0{index + 1}</span>
-                      <span>{step}</span>
-                    </li>
-                  ))}
-                </ol>
-              </section>
+              <RouteChecklist steps={guide.studySteps} storageKey={`guide:${slugifyMobilityName(guide.country)}`} title="Study-plan checklist" />
 
               <section className="rounded-2xl border border-white/10 bg-[#0e1318] p-6">
                 <div className="flex items-center gap-3">
@@ -197,24 +186,17 @@ export default async function MobilityDetailPage({ params }: MobilityDetailProps
               <QuickFact icon={<Globe2 className="size-4 text-cyan-300" />} label="Country / region" value={item.country} />
             </div>
 
-            <section className="rounded-2xl border border-white/10 bg-[#0e1318] p-6">
-              <div className="flex items-center gap-3">
-                <ClipboardCheck className="size-5 text-cyan-300" />
-                <h2 className="text-2xl font-semibold">How to apply</h2>
-              </div>
-              {item.steps ? (
-                <ol className="mt-6 space-y-5">
-                  {item.steps.map((step, index) => (
-                    <li key={step} className="flex gap-4 text-slate-300">
-                      <span className="text-cyan-300">0{index + 1}</span>
-                      <span className="leading-7">{step}</span>
-                    </li>
-                  ))}
-                </ol>
-              ) : (
+            {item.steps && item.steps.length > 0 ? (
+              <RouteChecklist steps={item.steps} storageKey={`route:${slug}`} title="How to apply — follow the route" />
+            ) : (
+              <section className="rounded-2xl border border-white/10 bg-[#0e1318] p-6">
+                <div className="flex items-center gap-3">
+                  <ClipboardCheck className="size-5 text-cyan-300" />
+                  <h2 className="text-2xl font-semibold">How to apply</h2>
+                </div>
                 <p className="mt-5 text-sm leading-7 text-slate-300">{item.howToApply}</p>
-              )}
-            </section>
+              </section>
+            )}
 
             <AdSlot variant="in-article" />
 
@@ -273,6 +255,23 @@ export default async function MobilityDetailPage({ params }: MobilityDetailProps
                 EarnLoop links you straight to the government or programme office. Always sign up, cash out, or send documents only through the official portal.
               </p>
             </div>
+            {item.verification?.verified ? (
+              <div className="rounded-2xl border border-lime-300/20 bg-lime-300/5 p-6">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="size-5 shrink-0 text-lime-300" />
+                  <p className="text-sm font-semibold">{sourceVerificationLabel(item.verification)}</p>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-slate-400">What we confirmed against the official page:</p>
+                <ul className="mt-4 space-y-2.5">
+                  {item.verification.checks.map((check) => (
+                    <li key={check} className="flex gap-2.5 text-xs leading-5 text-slate-300">
+                      <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-lime-300" />
+                      {check}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
             <AdSlot variant="sidebar" />
             {related.length > 0 ? (
               <div className="rounded-2xl border border-white/10 bg-[#0e1318] p-6">

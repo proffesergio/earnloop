@@ -13,6 +13,11 @@ export type Opportunity = {
   sourceLabel: string;
   documents?: string[];
   steps?: string[];
+  verification?: {
+    verified: boolean;
+    checkedOn: string | null;
+    checks: string[];
+  };
 };
 
 export type CountryGuide = {

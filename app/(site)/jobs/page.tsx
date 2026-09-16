@@ -22,11 +22,11 @@ export default async function JobsPage() {
       <div className="mx-auto max-w-6xl px-6 py-12 sm:py-16">
         <div className="max-w-3xl">
           <p className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
-            <Briefcase className="size-4" /> The EarnLoop board
+            <Briefcase className="size-4" /> Daily verified openings
           </p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-6xl">Find a real starting point.</h1>
           <p className="mt-5 text-lg leading-8 text-slate-400">
-            Honest roles, small gigs and proof-first earning ideas. Every listing includes what it pays, how it works, and where to start — skip the fluff.
+            Honest roles, small gigs and proof-first earning ideas. Every external listing carries a Verified source badge — what we checked and when — plus a step-by-step checklist you can follow.
           </p>
         </div>
 

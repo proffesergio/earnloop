@@ -1,23 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, CheckCircle2, ExternalLink, Globe2, MapPin, Wallet } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, CheckCircle2, ExternalLink, Globe2, MapPin, ShieldCheck, Wallet } from "lucide-react";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { JsonLd } from "@/components/seo/json-ld";
+import { RouteChecklist } from "@/components/loop/route-checklist";
 import { getJobBySlug } from "@/lib/job-content";
 import { slugifyJobTitle } from "@/lib/jobs";
+import { isInternalEarnLoopUrl, sourceVerificationLabel } from "@/lib/source-verification";
 import { pageMetadata, articleStructuredData, breadcrumbStructuredData } from "@/lib/seo";
 
 type JobDetailProps = { params: Promise<{ slug: string }> };
 
 export const dynamic = "force-dynamic";
-
-function isInternalJobUrl(url: string) {
-  try {
-    return new URL(url).host.includes("earnloop.app");
-  } catch {
-    return false;
-  }
-}
 
 export async function generateMetadata({ params }: JobDetailProps): Promise<Metadata> {
   const slug = (await params).slug;
@@ -46,7 +40,7 @@ export default async function JobDetailPage({ params }: JobDetailProps) {
   const related = board.jobs
     .filter((item) => item.id !== job.id && (item.category === job.category || item.tags.some((tag) => job.tags.includes(tag))))
     .slice(0, 4);
-  const internal = isInternalJobUrl(job.applyUrl);
+  const internal = isInternalEarnLoopUrl(job.applyUrl);
 
   return (
     <div className="cosmic-bg flex-1">
@@ -113,17 +107,11 @@ export default async function JobDetailPage({ params }: JobDetailProps) {
             ) : null}
 
             {job.howItWorks.length > 0 ? (
-              <section className="rounded-2xl border border-white/10 bg-[#0e1318] p-6">
-                <h2 className="text-2xl font-semibold">How it works</h2>
-                <ol className="mt-5 space-y-5">
-                  {job.howItWorks.map((step, index) => (
-                    <li key={step} className="flex gap-4 text-slate-300">
-                      <span className="text-cyan-300">0{index + 1}</span>
-                      <span className="leading-7">{step}</span>
-                    </li>
-                  ))}
-                </ol>
-              </section>
+              <RouteChecklist
+                steps={job.howItWorks}
+                storageKey={`jobs:${slug}`}
+                title="How it works — follow the route"
+              />
             ) : null}
 
             <AdSlot variant="in-article" />
@@ -163,6 +151,36 @@ export default async function JobDetailPage({ params }: JobDetailProps) {
                   : "Always follow the external source link for the live deadline, terms and payout details."}
               </p>
             </div>
+
+            {!internal ? (
+              <div
+                className={`rounded-2xl border p-6 ${
+                  job.verification?.verified ? "border-lime-300/20 bg-lime-300/5" : "border-amber-300/20 bg-amber-300/5"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className={`size-5 ${job.verification?.verified ? "text-lime-300" : "text-amber-200"}`} />
+                  <p className="text-sm font-semibold">
+                    {job.verification?.verified ? `Verified source · ${sourceVerificationLabel(job.verification)}` : "Check the source before applying"}
+                  </p>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-slate-400">
+                  {job.verification?.verified
+                    ? "What we confirmed against the official page:"
+                    : "This listing was not yet re-confirmed against a live official page. Open the source and verify before sharing any details."}
+                </p>
+                {job.verification?.checks && job.verification.checks.length > 0 ? (
+                  <ul className="mt-4 space-y-2.5">
+                    {job.verification.checks.map((check) => (
+                      <li key={check} className="flex gap-2.5 text-xs leading-5 text-slate-300">
+                        <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-lime-300" />
+                        {check}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            ) : null}
 
             <AdSlot variant="sidebar" />
 

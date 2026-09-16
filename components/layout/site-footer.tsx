@@ -5,7 +5,8 @@ const resourceLinks = [
   { href: "/prompts", label: "Prompt library" },
   { href: "/jobs", label: "Jobs & gigs" },
   { href: "/scholarships", label: "Scholarships & work routes" },
-  { href: "/news", label: "Journal" },
+  { href: "/tools", label: "Loop Builder" },
+  { href: "/news", label: "Tips" },
   { href: "/pricing", label: "Pricing" },
 ] as const;
 
@@ -25,7 +26,7 @@ export function SiteFooter() {
             Earn<span className="text-cyan-400">Loop</span>
           </Link>
           <p className="mt-3 max-w-xs text-sm leading-6 text-slate-400">
-            Learn it. Ship it. Loop the earnings. Blueprints, prompts and proof-first work for solo operators.
+            Verified openings. Step-by-step routes. Real work, real proof — never overnight promises.
           </p>
         </div>
 

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sourceVerificationSchema } from "@/lib/source-verification";
 
 export const routeTypeSchema = z.enum(["Scholarship", "Study portal", "Work route"]);
 
@@ -15,6 +16,7 @@ export const opportunitySchema = z.object({
   sourceLabel: z.string().trim().min(2).max(160),
   documents: z.array(z.string().trim().min(1).max(300)).max(24).default([]),
   steps: z.array(z.string().trim().min(1).max(600)).max(24).default([]),
+  verification: sourceVerificationSchema.default(() => ({ verified: false, checkedOn: null, checks: [] })),
 });
 
 export const countryGuideSchema = z.object({

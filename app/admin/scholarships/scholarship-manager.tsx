@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Plus, Save } from "lucide-react";
 import type { CountryGuide, Opportunity, RouteType } from "@/lib/scholarships";
+import { defaultSourceVerification, isVerifiedSource } from "@/lib/source-verification";
+import { SourceVerificationField, VerificationStatusLabel } from "@/components/admin/source-verification-field";
 
 const routeTypes: RouteType[] = ["Scholarship", "Study portal", "Work route"];
 
@@ -44,7 +46,7 @@ function ListArea({ label, value, onChange, placeholder, rows = 3 }: { label: st
 }
 
 function emptyOpportunity(): Opportunity {
-  return { name: "", country: "", type: "Scholarship", level: "", funding: "", summary: "", eligibility: "", howToApply: "", source: "https://", sourceLabel: "", documents: [], steps: [] };
+  return { name: "", country: "", type: "Scholarship", level: "", funding: "", summary: "", eligibility: "", howToApply: "", source: "https://", sourceLabel: "", documents: [], steps: [], verification: defaultSourceVerification() };
 }
 
 function emptyGuide(): CountryGuide {
@@ -63,7 +65,7 @@ export default function ScholarshipManager() {
     fetch("/api/admin/scholarships").then(async (response) => {
       const payload = await response.json() as { opportunities?: Opportunity[]; guides?: CountryGuide[]; error?: string };
       if (!response.ok || !payload.opportunities || !payload.guides) throw new Error(payload.error ?? "Unable to load the mobility desk.");
-      setOpportunities(payload.opportunities.map((item) => ({ ...item, documents: item.documents ?? [], steps: item.steps ?? [] })));
+      setOpportunities(payload.opportunities.map((item) => ({ ...item, documents: item.documents ?? [], steps: item.steps ?? [], verification: item.verification ?? defaultSourceVerification() })));
       setGuides(payload.guides.map((item) => ({ ...item, documents: item.documents ?? [], studySteps: item.studySteps ?? [] })));
       setOpenOpps(payload.opportunities.map(() => false));
       setOpenGuides(payload.guides.map(() => false));
@@ -97,6 +99,15 @@ export default function ScholarshipManager() {
   }
 
   async function save() {
+    const unverified = opportunities.filter((item) => !isVerifiedSource(item.verification));
+    if (unverified.length > 0) {
+      setMessage(
+        `Source verification required before publishing. Confirm the 'Source verification' checkboxes on: ${unverified
+          .map((item) => `“${item.name || "Untitled route"}”`)
+          .join(", ")}`
+      );
+      return;
+    }
     setSaving(true);
     setMessage(null);
     try {
@@ -136,6 +147,7 @@ export default function ScholarshipManager() {
                 >
                   <span className="font-medium hover:text-cyan-200">{item.name || "Untitled route"}</span>
                   <span className="ml-2 text-xs text-slate-500">{item.country || "—"} · {item.type}{item.documents && item.documents.length > 0 ? ` · ${item.documents.length} docs` : ""}</span>
+                  {item.verification ? <VerificationStatusLabel verification={item.verification} /> : null}
                 </button>
                 <button type="button" onClick={() => removeOpportunity(index)} className="text-xs text-rose-300 hover:text-rose-200">Delete</button>
               </div>
@@ -158,6 +170,7 @@ export default function ScholarshipManager() {
                   <Field label="Source label" value={item.sourceLabel} onChange={(value) => patchOpportunity(index, { sourceLabel: value })} />
                   <ListArea label="Typical documents (one per line)" value={item.documents ?? []} onChange={(documents) => patchOpportunity(index, { documents })} />
                   <ListArea label="Application steps (one per line, optional)" value={item.steps ?? []} onChange={(steps) => patchOpportunity(index, { steps })} />
+                  <SourceVerificationField verification={item.verification ?? defaultSourceVerification()} onChange={(verification) => patchOpportunity(index, { verification })} />
                 </div>
               ) : null}
             </div>

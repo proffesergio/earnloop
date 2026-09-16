@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Plus, Save } from "lucide-react";
 import type { JobPosting } from "@/lib/job-contract";
+import { defaultSourceVerification, isInternalEarnLoopUrl, isVerifiedSource } from "@/lib/source-verification";
+import { SourceVerificationField, VerificationStatusLabel } from "@/components/admin/source-verification-field";
 
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-[#07090c] px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-300/50";
@@ -58,6 +60,7 @@ function emptyJob(): JobPosting {
     howItWorks: [],
     tags: [],
     featured: false,
+    verification: defaultSourceVerification(),
     seo: {},
   };
 }
@@ -75,7 +78,7 @@ export default function JobsManager() {
       const payload = await response.json() as { categories?: string[]; jobs?: JobPosting[]; error?: string };
       if (!response.ok || !payload.categories || !payload.jobs) throw new Error(payload.error ?? "Unable to load the job board.");
       setCategories(payload.categories);
-      setJobs(payload.jobs.map((item) => ({ ...item, requirements: item.requirements ?? [], howItWorks: item.howItWorks ?? [], tags: item.tags ?? [], seo: item.seo ?? {} })));
+      setJobs(payload.jobs.map((item) => ({ ...item, requirements: item.requirements ?? [], howItWorks: item.howItWorks ?? [], tags: item.tags ?? [], verification: item.verification ?? defaultSourceVerification(), seo: item.seo ?? {} })));
     }).catch((reason: unknown) => setMessage(reason instanceof Error ? reason.message : "Unable to load the job board."));
   }, []);
 
@@ -113,6 +116,15 @@ export default function JobsManager() {
   }
 
   async function save() {
+    const unverified = jobs.filter((job) => !isInternalEarnLoopUrl(job.applyUrl) && !isVerifiedSource(job.verification));
+    if (unverified.length > 0) {
+      setMessage(
+        `Source verification required before publishing. Confirm the 'Source verification' checkboxes on: ${unverified
+          .map((job) => `“${job.title || "Untitled listing"}”`)
+          .join(", ")}`
+      );
+      return;
+    }
     setSaving(true);
     setMessage(null);
     try {
@@ -173,6 +185,7 @@ export default function JobsManager() {
                 >
                   <span className="font-medium hover:text-cyan-200">{item.title || "Untitled listing"}</span>
                   <span className="ml-2 text-xs text-slate-500">{item.category} · {item.payBand || "no pay band"}{item.featured ? " · ★ featured" : ""}</span>
+                  {item.verification ? <VerificationStatusLabel verification={item.verification} /> : null}
                 </button>
                 <button type="button" onClick={() => addJob(item.category)} className="text-xs text-slate-400 hover:text-white">Duplicate</button>
                 <button type="button" onClick={() => removeJob(item.id)} className="text-xs text-rose-300 hover:text-rose-200">Delete</button>
@@ -198,6 +211,13 @@ export default function JobsManager() {
                   <label className="flex items-center gap-2 text-sm text-slate-300">
                     <input type="checkbox" checked={item.featured} onChange={(event) => patchJob(item.id, { featured: event.target.checked })} className="accent-cyan-300" /> Featured (boosts on the board)
                   </label>
+                  {isInternalEarnLoopUrl(item.applyUrl) ? (
+                    <p className="rounded-xl border border-white/10 bg-black/20 p-3 text-xs leading-5 text-slate-400 sm:col-span-2">
+                      This applies through an EarnLoop blueprint (internal loop), so no external source check is needed. The public card will show no “Verified source” badge.
+                    </p>
+                  ) : (
+                    <SourceVerificationField verification={item.verification} onChange={(verification) => patchJob(item.id, { verification })} />
+                  )}
                   <div className="grid gap-3 sm:col-span-2 sm:grid-cols-2">
                     <Field label="SEO meta title (optional override)" value={item.seo.title ?? ""} onChange={(value) => patchJob(item.id, { seo: { ...item.seo, title: value || undefined } })} />
                     <Field label="SEO meta description (optional override)" value={item.seo.description ?? ""} onChange={(value) => patchJob(item.id, { seo: { ...item.seo, description: value || undefined } })} />

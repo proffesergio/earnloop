@@ -17,7 +17,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://earnloop.app"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://earnloop-kappa.vercel.app",
+  ),
   title: {
     default: "EarnLoop · AI side hustles, proven blueprints",
     template: "%s · EarnLoop",
@@ -39,7 +41,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", spaceGrotesk.variable, inter.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        spaceGrotesk.variable,
+        inter.variable,
+      )}
     >
       <body className="min-h-full flex flex-col bg-[#07090c]">
         {children}
@@ -47,7 +54,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ? (
           <Script
             defer
-            src={process.env.NEXT_PUBLIC_UMAMI_SRC ?? "https://cloud.umami.is/script.js"}
+            src={
+              process.env.NEXT_PUBLIC_UMAMI_SRC ??
+              "https://cloud.umami.is/script.js"
+            }
             data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
             strategy="afterInteractive"
           />

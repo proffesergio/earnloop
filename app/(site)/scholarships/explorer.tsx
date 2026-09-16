@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, CheckCircle2, MessageCircle, Search, ShieldCheck } from "lucide-react";
 import { slugifyMobilityName, type CountryGuide, type Opportunity, type RouteType } from "@/lib/scholarships";
+import { sourceVerificationLabel } from "@/lib/source-verification";
 
 const types: Array<"All" | RouteType> = ["All", "Scholarship", "Study portal", "Work route"];
 
@@ -65,7 +66,13 @@ export default function ScholarshipsExplorer({ opportunities, guides }: { opport
                   <h2 className="mt-4 text-xl font-semibold">{item.name}</h2>
                   <p className="mt-1 text-sm text-slate-500">{item.country} · {item.level}</p>
                 </div>
-                <ShieldCheck className="size-5 shrink-0 text-lime-300" />
+                {item.verification?.verified ? (
+                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-lime-300/10 px-2.5 py-1 text-[11px] font-medium text-lime-200" title="Checked against the official source">
+                    <ShieldCheck className="size-3.5" /> {sourceVerificationLabel(item.verification)}
+                  </span>
+                ) : (
+                  <ShieldCheck className="size-5 shrink-0 text-lime-300" />
+                )}
               </div>
               <p className="mt-5 leading-7 text-slate-300">{item.summary}</p>
               <div className="mt-5 grid gap-3 border-y border-white/10 py-4 text-sm sm:grid-cols-2">
